@@ -1,7 +1,16 @@
 import express, { Request, Response, NextFunction } from "express";
-import { RegisterType, LoginType } from "../../Types/Auth";
-import { customErrorType } from "../../Types/Auth/Error";
+import {
+  RegisterType,
+  LoginType,
+  JWTPayloadType,
+  JWTExpiresInType,
+  TokenType,
+  UserType,
+} from "../../Types/Auth";
+import { customErrorType } from "../../Types/Error";
 import User from "../../Models/Auth/User";
+import createJWT from "../../utils/createJWT";
+import { bcryptCompare, hashText } from "../../utils/bcrypt";
 
 //register function
 export const register = async (
@@ -20,12 +29,37 @@ export const register = async (
   try {
     const newAccount = new User();
     newAccount.username = username;
-    (newAccount.email = email), (newAccount.password = password);
+    const hashedPassword = await hashText({ rawText: password });
+    (newAccount.email = email), (newAccount.password = hashedPassword);
     await newAccount.save();
 
-    res
-      .status(200)
-      .json({ message: "Registration was successfull", data: newAccount });
+    const tokenPayload: JWTPayloadType = { id: String(newAccount._id), email };
+    const JWTSecret: string = process.env.JWT_SECRET || "";
+    const accessExpiresIn: JWTExpiresInType = { expiresIn: "3h" };
+    const refreshExpiresIn: JWTExpiresInType = { expiresIn: "7d" };
+
+    const accessToken = await createJWT({
+      data: tokenPayload,
+      secret: JWTSecret,
+      expiresIn: accessExpiresIn,
+    });
+    const refreshToken = await createJWT({
+      data: tokenPayload,
+      secret: JWTSecret,
+      expiresIn: refreshExpiresIn,
+    });
+
+    const hashedRefreshToken = await hashText({ rawText: refreshToken });
+    newAccount.refreshToken = hashedRefreshToken;
+    await newAccount.save();
+
+    res.status(200).json({
+      message: "Registration was successfull",
+      data: newAccount,
+      accessToken,
+      refreshToken,
+      refreshExpiresIn,
+    });
   } catch (error) {
     next(error);
   }
@@ -44,6 +78,51 @@ export const login = async (
     inputError.message = "Please provide both your email and password";
     return next(inputError);
   }
+  try {
+    const userExists: UserType | null = await User.findOne({ email: email })!;
+    if (userExists) {
+      const isPasswordCorrect = await bcryptCompare({
+        rawText: password,
+        hashText: userExists?.password!,
+      });
 
-  res.status(200).json({ message: "Inputs well received", data: req.body });
+      if (isPasswordCorrect) {
+        const tokenPayload: JWTPayloadType = {
+          id: String(userExists?._id),
+          email,
+        };
+        const JWTSecret: string = process.env.JWT_SECRET || "";
+        const accessExpiresIn: JWTExpiresInType = { expiresIn: "3h" };
+        const refreshExpiresIn: JWTExpiresInType = { expiresIn: "7d" };
+
+        const accessToken = await createJWT({
+          data: tokenPayload,
+          secret: JWTSecret,
+          expiresIn: accessExpiresIn,
+        });
+        const refreshToken = await createJWT({
+          data: tokenPayload,
+          secret: JWTSecret,
+          expiresIn: refreshExpiresIn,
+        });
+
+        const hashedRefreshToken = await hashText({ rawText: refreshToken });
+        userExists.refreshToken = hashedRefreshToken;
+        await userExists.save();
+        res
+          .status(200)
+          .json({
+            message: "Login was successfull",
+            accessToken,
+            refreshToken,
+          });
+      } else {
+        res.status(200).json({ message: "Incorrect Email or Password" });
+      }
+    } else {
+      next(new Error("User with that email doesn't exist"));
+    }
+  } catch (error) {
+    next(error);
+  }
 };
