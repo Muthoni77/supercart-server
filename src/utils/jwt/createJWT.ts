@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { TokenType } from "../Types/Auth";
+import { TokenType } from "../../Types/Auth";
 
 const createJWT = async ({
   data,

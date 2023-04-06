@@ -6,3 +6,5 @@ export interface compareHashType {
   rawText: string;
   hashText: string;
 }
+
+

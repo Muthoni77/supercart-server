@@ -6,11 +6,13 @@ import {
   JWTExpiresInType,
   TokenType,
   UserType,
+  CustomRequest,
 } from "../../Types/Auth";
 import { customErrorType } from "../../Types/Error";
 import User from "../../Models/Auth/User";
-import createJWT from "../../utils/createJWT";
+import createJWT from "../../utils/jwt/createJWT";
 import { bcryptCompare, hashText } from "../../utils/bcrypt";
+import { Types } from "mongoose";
 
 //register function
 export const register = async (
@@ -33,8 +35,9 @@ export const register = async (
     (newAccount.email = email), (newAccount.password = hashedPassword);
     await newAccount.save();
 
-    const tokenPayload: JWTPayloadType = { id: String(newAccount._id), email };
-    const JWTSecret: string = process.env.JWT_SECRET || "";
+    const tokenPayload: JWTPayloadType = { id: newAccount._id, email };
+    const JWTSecret: string = process.env.JWT_SECRET!;
+    const JWTRefreshSecret: string = process.env.JWT_REFRESH_SECRET!;
     const accessExpiresIn: JWTExpiresInType = { expiresIn: "3h" };
     const refreshExpiresIn: JWTExpiresInType = { expiresIn: "7d" };
 
@@ -45,7 +48,7 @@ export const register = async (
     });
     const refreshToken = await createJWT({
       data: tokenPayload,
-      secret: JWTSecret,
+      secret: JWTRefreshSecret,
       expiresIn: refreshExpiresIn,
     });
 
@@ -54,6 +57,7 @@ export const register = async (
     await newAccount.save();
 
     res.status(200).json({
+      error: false,
       message: "Registration was successfull",
       data: newAccount,
       accessToken,
@@ -88,10 +92,11 @@ export const login = async (
 
       if (isPasswordCorrect) {
         const tokenPayload: JWTPayloadType = {
-          id: String(userExists?._id),
+          id: userExists?._id,
           email,
         };
-        const JWTSecret: string = process.env.JWT_SECRET || "";
+        const JWTSecret: string = process.env.JWT_SECRET!;
+        const JWTRefreshSecret: string = process.env.JWT_REFRESH_SECRET!;
         const accessExpiresIn: JWTExpiresInType = { expiresIn: "3h" };
         const refreshExpiresIn: JWTExpiresInType = { expiresIn: "7d" };
 
@@ -102,27 +107,57 @@ export const login = async (
         });
         const refreshToken = await createJWT({
           data: tokenPayload,
-          secret: JWTSecret,
+          secret: JWTRefreshSecret,
           expiresIn: refreshExpiresIn,
         });
 
         const hashedRefreshToken = await hashText({ rawText: refreshToken });
         userExists.refreshToken = hashedRefreshToken;
         await userExists.save();
+        res.status(200).json({
+          message: "Login was successfull",
+          accessToken,
+          refreshToken,
+        });
+      } else {
         res
           .status(200)
-          .json({
-            message: "Login was successfull",
-            accessToken,
-            refreshToken,
-          });
-      } else {
-        res.status(200).json({ message: "Incorrect Email or Password" });
+          .json({ error: true, message: "Incorrect Email or Password" });
       }
     } else {
       next(new Error("User with that email doesn't exist"));
     }
   } catch (error) {
     next(error);
+  }
+};
+
+//logout
+export const logout = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.user!.id) {
+    res.status(403).json({ error: true, message: "Unauthorized" });
+  }
+  try {
+    const userId = req.user!.id;
+    const userEmail = req.user!.email;
+
+    const userExists: UserType | null = await User.findOne({
+      email: userEmail,
+    });
+    if (!userExists) {
+      throw new Error("Invalid Request");
+    }
+    userExists.refreshToken = "";
+    await userExists.save();
+    res
+      .status(200)
+      .json({ error: false, message: "You have successfully logged out!" });
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to log out error");
   }
 };

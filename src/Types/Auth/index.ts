@@ -1,3 +1,4 @@
+import { Request } from "express";
 import { Document, Types } from "mongoose";
 
 export interface RegisterType {
@@ -19,8 +20,8 @@ export interface UserType extends Document {
 }
 
 export interface JWTPayloadType {
+  id: Types.ObjectId;
   email: string;
-  id: string;
 }
 export interface JWTExpiresInType {
   expiresIn: string;
@@ -30,4 +31,15 @@ export interface TokenType {
   data: JWTPayloadType;
   secret: string;
   expiresIn: JWTExpiresInType;
+}
+
+export interface VerifyTokenType {
+  token: string;
+  secret: string;
+}
+
+export interface CustomRequest extends Request {
+  user?: {
+    [key: string]: any;
+  };
 }
