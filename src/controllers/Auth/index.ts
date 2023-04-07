@@ -279,3 +279,40 @@ export const verifyEmail = async (
       .json({ success: false, message: "Failed to Verify your email!" });
   }
 };
+
+export const requestResetPassword = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    res.status(200).json({
+      success: true,
+      message:
+        "Request was successfull. Check your email for further instructions",
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to reset your password!" });
+  }
+};
+
+export const resetPassword = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    res.status(200).json({
+      success: true,
+      message: "You password was changed successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to reset your password!" });
+  }
+};
