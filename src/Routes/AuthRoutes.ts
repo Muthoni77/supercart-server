@@ -14,6 +14,6 @@ router.post("/login", login);
 router.post("/register", register);
 router.get("/logout", JWTGuard, logout);
 router.get("/refresh-token", JWTRefreshGuard, refreshToken);
-router.get("/verify-email/:id", verifyEmail);
+router.get("/verify-email/:token", verifyEmail);
 
 export default router;

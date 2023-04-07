@@ -14,6 +14,7 @@ import createJWT from "../../utils/jwt/createJWT";
 import { bcryptCompare, hashText } from "../../utils/bcrypt";
 import formatPhoneNumber from "../../utils/formatPhoneNumber";
 import { sendEmailActivation } from "../../utils/sendEmail";
+import verifyJWT from "../../utils/jwt/verifyJWT";
 
 //register function
 export const register = async (
@@ -244,15 +245,37 @@ export const verifyEmail = async (
   next: NextFunction
 ) => {
   try {
+    const verificationToken = req.params.token;
+    const tokenSecret = process.env.JWT_VERIFICATION_SECRET!;
+    if (!verificationToken) next(new Error("Invalid Request"));
+
+    const isTokenValid = await verifyJWT({
+      token: verificationToken,
+      secret: tokenSecret,
+    });
+
+    if (!isTokenValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Token",
+      });
+    }
+
+    const userExists = await User.findOne({ email: isTokenValid.email });
+    if (!userExists) throw new Error("Invalid Request");
+
+    userExists.emailVerified = true;
+    await userExists.save();
+
     res.status(200).json({
       success: true,
       message: "Email was verified successfully!",
-      id: req.params.id,
+      isTokenValid,
     });
   } catch (error) {
     console.log(error);
     res
-      .status(200)
+      .status(400)
       .json({ success: false, message: "Failed to Verify your email!" });
   }
 };
