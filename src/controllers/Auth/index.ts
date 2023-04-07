@@ -13,7 +13,10 @@ import User from "../../Models/Auth/User";
 import createJWT from "../../utils/jwt/createJWT";
 import { bcryptCompare, hashText } from "../../utils/bcrypt";
 import formatPhoneNumber from "../../utils/formatPhoneNumber";
-import { sendEmailActivation } from "../../utils/sendEmail";
+import {
+  sendEmailActivation,
+  sendRequestPasswordChangeEmail,
+} from "../../utils/sendEmail";
 import verifyJWT from "../../utils/jwt/verifyJWT";
 
 //register function
@@ -143,7 +146,7 @@ export const login = async (
         });
       } else {
         res
-          .status(200)
+          .status(500)
           .json({ success: false, message: "Incorrect Email or Password" });
       }
     } else {
@@ -234,7 +237,7 @@ export const refreshToken = async (
   } catch (error) {
     console.log(error);
     res
-      .status(200)
+      .status(500)
       .json({ success: false, message: "Failed to refresh token!" });
   }
 };
@@ -286,8 +289,41 @@ export const requestResetPassword = async (
   next: NextFunction
 ) => {
   try {
+    const userEmail = req.body.email;
+    if (!userEmail) {
+      return next(new Error("You must provide your reset account email!"));
+    }
+
+    const userExists = await User.findOne({ email: userEmail });
+
+    if (!userExists)
+      return next(
+        new Error("We don't have an account registered with that user!")
+      );
+
+    const tokenPayload: JWTPayloadType = {
+      id: userExists!._id,
+      email: userEmail,
+    };
+
+    const tokenSecret = process.env.JWT_RESET_PASSWORD_SECRET!;
+    const tokenExpiry: JWTExpiresInType = { expiresIn: "30m" };
+    const token = await createJWT({
+      data: tokenPayload,
+      secret: tokenSecret,
+      expiresIn: tokenExpiry,
+    });
+    const isEmailSent = await sendRequestPasswordChangeEmail({
+      recipientEmail: userEmail,
+      token: token,
+    });
+
+    if (!isEmailSent) {
+      return next(new Error("Failed to send the reset password email!"));
+    }
     res.status(200).json({
       success: true,
+      userEmail,
       message:
         "Request was successfull. Check your email for further instructions",
     });

@@ -8,7 +8,7 @@ export interface compareHashType {
 }
 
 export interface EmailBodyType {
-  recipientName: string;
+  recipientName?: string;
   recipientEmail: string;
   token: string;
 }
