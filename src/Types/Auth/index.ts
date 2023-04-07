@@ -5,6 +5,7 @@ export interface RegisterType {
   username: string;
   email: string;
   password: string;
+  phone: string;
 }
 export interface LoginType {
   email: string;
@@ -15,6 +16,7 @@ export interface UserType extends Document {
   _id: Types.ObjectId;
   username: string;
   email: string;
+  phone: string;
   password: string;
   refreshToken: string;
 }

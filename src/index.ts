@@ -12,6 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //routes
 import AuthRoutes from "./Routes/AuthRoutes";
+import TestRoutes from "./Routes/TestRoutes";
 import mongoose, { mongo } from "mongoose";
 
 const PORT = process.env.PORT;
@@ -24,6 +25,7 @@ app.get("/", (req: Request, res: Response): void => {
   );
 });
 app.use("/auth", AuthRoutes);
+app.use("/test", TestRoutes);
 
 //Error handling middleware
 app.use(errorHandler);
