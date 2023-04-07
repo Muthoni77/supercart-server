@@ -30,6 +30,15 @@ app.use("/test", TestRoutes);
 //Error handling middleware
 app.use(errorHandler);
 
+app.use("*", (req, res) => {
+  res
+    .status(400)
+    .json({
+      success: false,
+      message: "The requested page was not found on this server.",
+    });
+});
+
 mongoose.connection.on("open", () => {
   app.listen(PORT, (): void => {
     console.log(`Server is listening on port ${PORT}`);

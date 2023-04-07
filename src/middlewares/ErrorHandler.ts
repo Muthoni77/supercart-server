@@ -11,10 +11,9 @@ const errorHandler = (
   const errorMessage = err.message || "Something went wrong";
 
   res.json({
-    error: {
-      status: statusCode,
-      message: errorMessage,
-    },
+    success: false,
+    status: statusCode,
+    error: errorMessage,
   });
 };
 
