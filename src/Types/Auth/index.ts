@@ -19,6 +19,9 @@ export interface UserType extends Document {
   phone: string;
   password: string;
   refreshToken: string;
+  OTP?: string;
+  emailVerified: boolean;
+  phoneVerified: boolean;
 }
 
 export interface JWTPayloadType {

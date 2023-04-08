@@ -19,13 +19,14 @@ import {
   sendRequestPasswordChangeEmail,
 } from "../../utils/sendEmail";
 import verifyJWT from "../../utils/jwt/verifyJWT";
+import sendMessage from "../../utils/sendMessage";
 
 //register function
 export const register = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+) => {
   const { username, email, phone, password }: RegisterType = req.body;
   if (!username || !email || !password) {
     const inputError: customErrorType = new Error();
@@ -36,10 +37,11 @@ export const register = async (
 
   try {
     const newAccount = new User();
+    const formattedPhone = await formatPhoneNumber(phone);
     newAccount.username = username;
     const hashedPassword = await hashText({ rawText: password });
     (newAccount.email = email), (newAccount.password = hashedPassword);
-    newAccount.phone = await formatPhoneNumber(phone);
+    newAccount.phone = formattedPhone;
     await newAccount.save();
 
     const tokenPayload: JWTPayloadType = { id: newAccount._id, email };
@@ -49,6 +51,11 @@ export const register = async (
     const accessExpiresIn: JWTExpiresInType = { expiresIn: "3h" };
     const refreshExpiresIn: JWTExpiresInType = { expiresIn: "7d" };
     const verificationExpiresIn: JWTExpiresInType = { expiresIn: "1d" };
+
+    const OTP = Math.floor(Math.random() * 10000);
+    const hashedOTP = await hashText({ rawText: String(OTP) });
+
+    newAccount.OTP = hashedOTP;
 
     const accessToken = await createJWT({
       data: tokenPayload,
@@ -79,6 +86,18 @@ export const register = async (
 
     if (!isEmailSent) {
       next(new Error("Failed to send activation email"));
+    }
+
+    //sendMessage
+    const isMessageSent = await sendMessage({
+      recipients: ["+" + formattedPhone],
+      message: `Hello there, Your OTP for SuperCart is ${OTP}.`,
+    });
+
+    if (!isMessageSent) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Failed to send the OTP" });
     }
 
     res.status(200).json({
@@ -123,7 +142,7 @@ export const login = async (
         };
         const JWTSecret: string = process.env.JWT_SECRET!;
         const JWTRefreshSecret: string = process.env.JWT_REFRESH_SECRET!;
-        const accessExpiresIn: JWTExpiresInType = { expiresIn: "30s" };
+        const accessExpiresIn: JWTExpiresInType = { expiresIn: "1h" };
         const refreshExpiresIn: JWTExpiresInType = { expiresIn: "7d" };
 
         const accessToken = await createJWT({
@@ -243,6 +262,60 @@ export const refreshToken = async (
   }
 };
 
+export const requestVerifyEmail = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userEmail = req.user?.email;
+
+    const userExists: UserType | null = await User.findOne({
+      email: userEmail,
+    });
+    if (userExists) {
+      const tokenPayload: JWTPayloadType = {
+        id: userExists!._id,
+        email: userEmail,
+      };
+
+      const JWTVerificationSecret: string =
+        process.env.JWT_VERIFICATION_SECRET!;
+      const verificationExpiresIn: JWTExpiresInType = { expiresIn: "1d" };
+
+      const verificationToken = await createJWT({
+        data: tokenPayload,
+        secret: JWTVerificationSecret,
+        expiresIn: verificationExpiresIn,
+      });
+
+      //send Activation Email
+      const isEmailSent = await sendEmailActivation({
+        token: verificationToken,
+        recipientName: userExists.username,
+        recipientEmail: userExists.email,
+      });
+
+      if (!isEmailSent) {
+        next(new Error("Failed to send activation email"));
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Kindly check your email for further instructions",
+      });
+    } else {
+      next(new Error("Invalid request"));
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to complete email verification request!",
+    });
+  }
+};
+
 export const verifyEmail = async (
   req: CustomRequest,
   res: Response,
@@ -271,11 +344,13 @@ export const verifyEmail = async (
     userExists.emailVerified = true;
     await userExists.save();
 
-    res.status(200).json({
-      success: true,
-      message: "Email was verified successfully!",
-      isTokenValid,
-    });
+    // res.status(200).json({
+    //   success: true,
+    //   message: "Email was verified successfully!",
+    //   isTokenValid,
+    // });
+
+    res.redirect(`${process.env.FRONTEND_URL}/email-verified`);
   } catch (error) {
     console.log(error);
     res
@@ -394,5 +469,103 @@ export const resetPassword = async (
     res
       .status(500)
       .json({ success: false, message: "Failed to reset your password!" });
+  }
+};
+
+export const resendOTP = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    //check if user exists
+    const userEmail = req.user?.email;
+
+    const userExists: UserType | null = await User.findOne({
+      email: userEmail,
+    });
+
+    const OTP = Math.floor(Math.random() * 10000);
+    const hashedOTP = await hashText({ rawText: String(OTP) });
+
+    userExists!.OTP = hashedOTP;
+    await userExists!.save();
+
+    if (!userEmail || !userExists)
+      return res
+        .status(403)
+        .json({ success: false, message: "Unauthorized Request" });
+
+    const isMessageSent = await sendMessage({
+      recipients: ["+" + userExists.phone],
+      message: `Hello there, Your OTP for SuperCart is ${OTP}.`,
+    });
+
+    if (!isMessageSent) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Failed to send the OTP" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "OTP was sent successfully",
+      userExists,
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to reset your password!" });
+  }
+};
+
+export const verifyOTP = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const guessOTP = req.body.otp;
+
+    if (!guessOTP)
+      return res.status(403).json({ success: false, message: "OTP required" });
+
+    //check if user exists
+    const userEmail = req.user?.email;
+
+    const userExists: UserType | null = await User.findOne({
+      email: userEmail,
+    });
+
+    if (!userEmail || !userExists)
+      return res
+        .status(403)
+        .json({ success: false, message: "Unauthorized Request" });
+
+    const isOTPCorrect = await bcryptCompare({
+      rawText: String(guessOTP),
+      hashText: userExists.OTP!,
+    });
+
+    if (!isOTPCorrect) {
+      return res
+        .status(403)
+        .json({ success: false, message: "You have entered the wrong OTP!" });
+    }
+
+    userExists.phoneVerified = true;
+    await userExists.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Phone number was verified successfully",
+      userExists,
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to verify your OTP!" });
   }
 };

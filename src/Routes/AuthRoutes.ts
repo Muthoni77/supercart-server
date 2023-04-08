@@ -8,6 +8,9 @@ import {
   verifyEmail,
   requestResetPassword,
   resetPassword,
+  resendOTP,
+  verifyOTP,
+  requestVerifyEmail,
 } from "../controllers/Auth";
 import JWTGuard from "../guards/JWTGuard";
 import JWTRefreshGuard from "../guards/JWTRefreshGuard";
@@ -17,7 +20,10 @@ router.post("/login", login);
 router.post("/register", register);
 router.get("/logout", JWTGuard, logout);
 router.get("/refresh-token", JWTRefreshGuard, refreshToken);
+router.get("/request-verify-email", JWTGuard, requestVerifyEmail);
 router.get("/verify-email/:token", verifyEmail);
 router.post("/request-reset-password", requestResetPassword);
-router.post("/reset-password",JWTResetGuard, resetPassword);
+router.post("/reset-password", JWTResetGuard, resetPassword);
+router.get("/resend-otp", JWTGuard, resendOTP);
+router.post("/verify-otp", JWTGuard, verifyOTP);
 export default router;

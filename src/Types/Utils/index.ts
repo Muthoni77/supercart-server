@@ -12,3 +12,7 @@ export interface EmailBodyType {
   recipientEmail: string;
   token: string;
 }
+export interface MessageBodyType {
+  recipients: string[];
+  message: string;
+}
