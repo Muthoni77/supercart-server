@@ -16,14 +16,23 @@ const UserSchema = new Schema({
     required: true,
     unique: true,
   },
+  OTP: {
+    type: String,
+    required: false,
+  },
   password: {
     type: String,
     required: true,
   },
-  emailVerified:{
-    type:Boolean,
-    required:false,
-    default:false
+  emailVerified: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  phoneVerified: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
   refreshToken: {
     type: String,
