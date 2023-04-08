@@ -12,13 +12,13 @@ const JWTGuard = async (
     //check if token is available
     const tokenString = req.headers.authorization || req.headers.Authorization;
     if (!tokenString) {
-      res.status(403).json({ message: "Unauthorized Request" });
+      return res.status(403).json({ message: "Unauthorized Request" });
     }
 
     const accessToken: string = String(tokenString).split(" ")[1];
 
     if (!accessToken) {
-      res.status(403).json({ message: "Unauthorized Request" });
+      return res.status(403).json({ message: "Unauthorized Request" });
     }
 
     const tokenSecret = process.env.JWT_SECRET!;
@@ -29,7 +29,7 @@ const JWTGuard = async (
     });
 
     if (!guardValidCheck) {
-      res.status(403).json({ message: "Invalid Access Token" });
+      return res.status(403).json({ message: "Invalid Access Token" });
     }
     req.user = {};
 
