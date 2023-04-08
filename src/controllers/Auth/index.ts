@@ -7,6 +7,7 @@ import {
   TokenType,
   UserType,
   CustomRequest,
+  ResetPasswordBody,
 } from "../../Types/Auth";
 import { customErrorType } from "../../Types/Error";
 import User from "../../Models/Auth/User";
@@ -307,7 +308,7 @@ export const requestResetPassword = async (
     };
 
     const tokenSecret = process.env.JWT_RESET_PASSWORD_SECRET!;
-    const tokenExpiry: JWTExpiresInType = { expiresIn: "30m" };
+    const tokenExpiry: JWTExpiresInType = { expiresIn: "1h" };
     const token = await createJWT({
       data: tokenPayload,
       secret: tokenSecret,
@@ -341,9 +342,52 @@ export const resetPassword = async (
   next: NextFunction
 ) => {
   try {
+    //check inputs
+    const { oldPassword, newPassword }: ResetPasswordBody = req.body;
+
+    if (!oldPassword || !newPassword)
+      return res
+        .status(400)
+        .json({ success: false, message: "Inputs required!" });
+
+    //check if user exists
+    const userEmail = req.user?.email;
+
+    const userExists: UserType | null = await User.findOne({
+      email: userEmail,
+    });
+
+    if (!userEmail || !userExists)
+      return res
+        .status(403)
+        .json({ success: false, message: "Unauthorized Request" });
+
+    //check if old password is correct
+    const oldPasswordMatch = await bcryptCompare({
+      rawText: oldPassword,
+      hashText: userExists?.password!,
+    });
+
+    if (!oldPasswordMatch)
+      return res
+        .status(400)
+        .json({ success: false, message: "Wrong Password" });
+
+    //hash new password
+    const newHashedPassword: string = await hashText({ rawText: newPassword });
+
+    userExists!.password = newHashedPassword;
+    await userExists?.save();
+
+    if (!userExists)
+      return res
+        .status(403)
+        .json({ success: false, message: "Invalid Request" });
+
     res.status(200).json({
       success: true,
       message: "You password was changed successfully",
+      userExists,
     });
   } catch (error) {
     console.log(error);
