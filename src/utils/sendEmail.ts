@@ -111,14 +111,16 @@ export const sendRequestPasswordChangeEmail = async ({
                 </td>
             </tr>
             <tr>
-                 <h2>Reset You Account's Password</h2>
-            <p>Hello,</p>
-            <p>We have received a request to reset your password. If you did not make this request, you can safely ignore this email.</p>
-            <p>Otherwise, please click the button below to proceed to reset your password:</p>
-            <a href="${process.env.FRONTEND_RESET_PASSWORD_LINK}/${token}" target="_blank" style="background-color: #008CBA; color: #fff; display: inline-block; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Reset Password</a>
-            <br/>
-            <p>Best regards,</p>
-            <p>The SuperCart Team</p>
+              <td style="padding:20px;">
+                <h2>Reset You Account's Password</h2>
+                <p>Hello,</p>
+                <p>We have received a request to reset your password. If you did not make this request, you can safely ignore this email.</p>
+                <p>Otherwise, please click the button below to proceed to reset your password:</p>
+                <a href="${process.env.FRONTEND_RESET_PASSWORD_LINK}/${token}" target="_blank" style="background-color: #008CBA; color: #fff; display: inline-block; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Reset Password</a>
+                <br/>
+                <p>Best regards,</p>
+                <p>The SuperCart Team</p>
+              </td>
             </tr>
             </table>
         </body>
