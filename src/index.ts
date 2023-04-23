@@ -12,6 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //routes
 import AuthRoutes from "./Routes/AuthRoutes";
+import ProfileRoutes from "./Routes/ProfileRoutes";
 import TestRoutes from "./Routes/TestRoutes";
 import mongoose, { mongo } from "mongoose";
 
@@ -25,18 +26,17 @@ app.get("/", (req: Request, res: Response): void => {
   );
 });
 app.use("/auth", AuthRoutes);
+app.use("/profile", ProfileRoutes);
 app.use("/test", TestRoutes);
 
 //Error handling middleware
 app.use(errorHandler);
 
 app.use("*", (req, res) => {
-  res
-    .status(400)
-    .json({
-      success: false,
-      message: "The requested page was not found on this server.",
-    });
+  res.status(400).json({
+    success: false,
+    message: "The requested page was not found on this server.",
+  });
 });
 
 mongoose.connection.on("open", () => {

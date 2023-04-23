@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
+import Profile from "./Profile";
 
 const UserSchema = new Schema({
   username: {
@@ -34,8 +35,14 @@ const UserSchema = new Schema({
     required: false,
     default: false,
   },
+
   refreshToken: {
     type: String,
+    required: false,
+  },
+  profile: {
+    type: Schema.Types.ObjectId,
+    ref: Profile,
     required: false,
   },
 });

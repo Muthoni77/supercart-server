@@ -20,7 +20,7 @@ router.post("/login", login);
 router.post("/register", register);
 router.get("/logout", JWTGuard, logout);
 router.get("/refresh-token", JWTRefreshGuard, refreshToken);
-router.get("/request-verify-email", JWTGuard, requestVerifyEmail);
+router.post("/request-verify-email", requestVerifyEmail);
 router.get("/verify-email/:token", verifyEmail);
 router.post("/request-reset-password", requestResetPassword);
 router.post("/reset-password", JWTResetGuard, resetPassword);

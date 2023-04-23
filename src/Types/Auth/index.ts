@@ -22,6 +22,7 @@ export interface UserType extends Document {
   OTP?: string;
   emailVerified: boolean;
   phoneVerified: boolean;
+  profile: any;
 }
 
 export interface JWTPayloadType {

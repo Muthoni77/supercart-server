@@ -13,7 +13,7 @@ const errorHandler = (
   res.json({
     success: false,
     status: statusCode,
-    error: errorMessage,
+    message: errorMessage,
   });
 };
 

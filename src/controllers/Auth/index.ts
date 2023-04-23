@@ -20,6 +20,7 @@ import {
 } from "../../utils/sendEmail";
 import verifyJWT from "../../utils/jwt/verifyJWT";
 import sendMessage from "../../utils/sendMessage";
+import Profile from "../../Models/Auth/Profile";
 
 //register function
 export const register = async (
@@ -44,13 +45,21 @@ export const register = async (
     newAccount.phone = formattedPhone;
     await newAccount.save();
 
+    //create profile for user;
+    const accountProfile = new Profile();
+    accountProfile.userId = newAccount._id;
+    await accountProfile.save();
+
+    //update user with the profile id;
+    newAccount.profile = accountProfile._id;
+
     const tokenPayload: JWTPayloadType = { id: newAccount._id, email };
     const JWTSecret: string = process.env.JWT_SECRET!;
     const JWTRefreshSecret: string = process.env.JWT_REFRESH_SECRET!;
     const JWTVerificationSecret: string = process.env.JWT_VERIFICATION_SECRET!;
     const accessExpiresIn: JWTExpiresInType = { expiresIn: "3h" };
     const refreshExpiresIn: JWTExpiresInType = { expiresIn: "7d" };
-    const verificationExpiresIn: JWTExpiresInType = { expiresIn: "1d" };
+    const verificationExpiresIn: JWTExpiresInType = { expiresIn: "2h" };
 
     const OTP = Math.floor(Math.random() * 10000);
     const hashedOTP = await hashText({ rawText: String(OTP) });
@@ -88,26 +97,35 @@ export const register = async (
       next(new Error("Failed to send activation email"));
     }
 
+    console.log(`The OTP sent is ${OTP}`);
     //sendMessage
-    const isMessageSent = await sendMessage({
-      recipients: ["+" + formattedPhone],
-      message: `Hello there, Your OTP for SuperCart is ${OTP}.`,
-    });
+    // const isMessageSent = await sendMessage({
+    //   recipients: ["+" + formattedPhone],
+    //   message: `Hello there ${username}, Your OTP for SuperCart is ${OTP}.`,
+    // });
 
-    if (!isMessageSent) {
-      return res
-        .status(403)
-        .json({ success: false, message: "Failed to send the OTP" });
-    }
+    // if (!isMessageSent) {
+    //   return res
+    //     .status(403)
+    //     .json({ success: false, message: "Failed to send the OTP" });
+    // }
+
+    const returnedUser = {
+      id: newAccount._id,
+      username,
+      email,
+      phone,
+      emailVerified: newAccount.emailVerified,
+      phoneVerified: newAccount.phoneVerified,
+    };
 
     res.status(200).json({
       success: true,
       message:
         "Registration was successfull! Kindly check your email for further instructions.",
-      data: newAccount,
+      data: returnedUser,
       accessToken,
       refreshToken,
-      refreshExpiresIn,
     });
   } catch (error) {
     next(error);
@@ -128,7 +146,9 @@ export const login = async (
     return next(inputError);
   }
   try {
-    const userExists: UserType | null = await User.findOne({ email: email })!;
+    const userExists: UserType | null = await User.findOne({
+      email: email,
+    }).populate("profile")!;
     if (userExists) {
       const isPasswordCorrect = await bcryptCompare({
         rawText: password,
@@ -159,14 +179,27 @@ export const login = async (
         const hashedRefreshToken = await hashText({ rawText: refreshToken });
         userExists.refreshToken = hashedRefreshToken;
         await userExists.save();
+
+        const returnedUser = {
+          id: userExists._id,
+          username: userExists.username,
+          email: userExists.email,
+          phone: userExists.phone,
+          emailVerified: userExists.emailVerified,
+          phoneVerified: userExists.phoneVerified,
+          profile: userExists.profile,
+        };
+
         res.status(200).json({
+          success: true,
           message: "Login was successfull",
+          data: returnedUser,
           accessToken,
           refreshToken,
         });
       } else {
         res
-          .status(500)
+          .status(200)
           .json({ success: false, message: "Incorrect Email or Password" });
       }
     } else {
@@ -268,7 +301,13 @@ export const requestVerifyEmail = async (
   next: NextFunction
 ) => {
   try {
-    const userEmail = req.user?.email;
+    const userEmail = req.body.email;
+    if (!userEmail) {
+      res.status(200).json({
+        success: false,
+        message: "You must enter your email",
+      });
+    }
 
     const userExists: UserType | null = await User.findOne({
       email: userEmail,
@@ -332,10 +371,13 @@ export const verifyEmail = async (
     });
 
     if (!isTokenValid) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid Token",
-      });
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/auth/verification/token-expired`
+      );
+      // return res.status(400).json({
+      //   success: false,
+      //   message: "Invalid Token",
+      // });
     }
 
     const userExists = await User.findOne({ email: isTokenValid.email });
@@ -350,7 +392,9 @@ export const verifyEmail = async (
     //   isTokenValid,
     // });
 
-    res.redirect(`${process.env.FRONTEND_URL}/email-verified`);
+    res.redirect(
+      `${process.env.FRONTEND_URL}/auth/verification/email-verified`
+    );
   } catch (error) {
     console.log(error);
     res
@@ -418,11 +462,11 @@ export const resetPassword = async (
 ) => {
   try {
     //check inputs
-    const { oldPassword, newPassword }: ResetPasswordBody = req.body;
+    const { newPassword }: ResetPasswordBody = req.body;
 
-    if (!oldPassword || !newPassword)
+    if (!newPassword)
       return res
-        .status(400)
+        .status(200)
         .json({ success: false, message: "Inputs required!" });
 
     //check if user exists
@@ -434,19 +478,8 @@ export const resetPassword = async (
 
     if (!userEmail || !userExists)
       return res
-        .status(403)
+        .status(200)
         .json({ success: false, message: "Unauthorized Request" });
-
-    //check if old password is correct
-    const oldPasswordMatch = await bcryptCompare({
-      rawText: oldPassword,
-      hashText: userExists?.password!,
-    });
-
-    if (!oldPasswordMatch)
-      return res
-        .status(400)
-        .json({ success: false, message: "Wrong Password" });
 
     //hash new password
     const newHashedPassword: string = await hashText({ rawText: newPassword });
@@ -515,7 +548,7 @@ export const resendOTP = async (
   } catch (error) {
     console.log(error);
     res
-      .status(500)
+      .status(200)
       .json({ success: false, message: "Failed to reset your password!" });
   }
 };
@@ -550,7 +583,7 @@ export const verifyOTP = async (
 
     if (!isOTPCorrect) {
       return res
-        .status(403)
+        .status(200)
         .json({ success: false, message: "You have entered the wrong OTP!" });
     }
 
@@ -565,7 +598,7 @@ export const verifyOTP = async (
   } catch (error) {
     console.log(error);
     res
-      .status(500)
+      .status(200)
       .json({ success: false, message: "Failed to verify your OTP!" });
   }
 };
