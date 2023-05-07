@@ -4,14 +4,13 @@ import cors from "cors";
 import dotenv from "dotenv";
 import errorHandler from "./middlewares/ErrorHandler";
 import connectToDB from "./config/ConnectToDB";
-import fileUpload from "express-fileupload";
+
 dotenv.config();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Use the express-fileupload middleware
-app.use(fileUpload());
 
 //routes
 import AuthRoutes from "./Routes/AuthRoutes";

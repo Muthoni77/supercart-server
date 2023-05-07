@@ -3,6 +3,7 @@ import { CustomRequest, UserType } from "../../Types/Auth";
 import User from "../../Models/Auth/User";
 import { ProfileType } from "../../Types/Profile";
 import Profile from "../../Models/Auth/Profile";
+import uploadToCloudinary from "../../utils/uploadToCloudinary";
 
 export const fetchProfile = async (
   req: CustomRequest,
@@ -69,7 +70,14 @@ export const updateProfilePhoto = async (
   next: NextFunction
 ) => {
   try {
-    
+    if (!req.file) next(Error("File missing"));
+    const myFile: Express.Multer.File = req!.file!;
+    const fileUrl = await uploadToCloudinary(myFile);
+    if (!fileUrl) {
+      next(Error("Failed to upload photo"));
+    }
+
+    res.status(200).json({ fileUrl });
   } catch (error) {
     next(error);
   }
