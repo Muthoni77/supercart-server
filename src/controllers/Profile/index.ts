@@ -70,14 +70,39 @@ export const updateProfilePhoto = async (
   next: NextFunction
 ) => {
   try {
+    const email = req.user?.email;
+    console.log("emal is here ", email);
+    if (!email) {
+      next(Error("Unauthorized request"));
+    }
+    //check if user exists
+    const userAccount = await User.findOne({ email });
+    if (!userAccount) return next(new Error("Unauthorized Request"));
+
     if (!req.file) next(Error("File missing"));
     const myFile: Express.Multer.File = req!.file!;
     const fileUrl = await uploadToCloudinary(myFile);
     if (!fileUrl) {
       next(Error("Failed to upload photo"));
     }
+    const options = {
+      upsert: true, // Create a new document if it doesn't exist
+      new: true, // Return the updated document
+    };
+    const userProfile = await Profile.findOneAndUpdate(
+      {
+        userId: userAccount._id,
+      },
+      { photo: fileUrl },
+      options
+    );
+    const returnedUser = await User.findOne({ email }).populate("profile");
 
-    res.status(200).json({ fileUrl });
+    res.status(200).json({
+      success: true,
+      message: "Profile photo was updated successfully",
+      user: returnedUser,
+    });
   } catch (error) {
     next(error);
   }
