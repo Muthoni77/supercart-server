@@ -62,3 +62,15 @@ export const updateProfile = async (
     next(error);
   }
 };
+
+export const updateProfilePhoto = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    
+  } catch (error) {
+    next(error);
+  }
+};
