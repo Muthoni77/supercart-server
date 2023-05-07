@@ -6,7 +6,7 @@ const createJWT = async ({
   secret,
   expiresIn,
 }: TokenType): Promise<string> => {
-  const token = jwt.sign(data, secret, expiresIn);
+  const token = jwt.sign({ data: data }, secret, expiresIn);
   return token;
 };
 
