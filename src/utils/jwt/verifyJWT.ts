@@ -9,9 +9,15 @@ const verifyJWT = async ({
   try {
     const isValid: any = jwt.verify(token, secret)!;
     if (isValid) {
+      const { id, email } = isValid.data;
+      console.log("Isvalid");
+      console.log(isValid);
+      console.log("Isvalid data");
+      console.log(isValid.data);
+
       const decodedData: JWTPayloadType = {
-        id: isValid.id,
-        email: isValid.email,
+        id,
+        email,
       };
       return decodedData;
     }
