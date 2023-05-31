@@ -17,6 +17,7 @@ import AuthRoutes from "./Routes/AuthRoutes";
 import ProfileRoutes from "./Routes/ProfileRoutes";
 import TestRoutes from "./Routes/TestRoutes";
 import mongoose, { mongo } from "mongoose";
+import MpesaRoutes from "./Routes/payments/mpesa/MpesaRoutes";
 
 const PORT = process.env.PORT;
 
@@ -30,6 +31,7 @@ app.get("/", (req: Request, res: Response): void => {
 app.use("/auth", AuthRoutes);
 app.use("/profile", ProfileRoutes);
 app.use("/test", TestRoutes);
+app.use("/payments/mpesa", MpesaRoutes);
 
 //Error handling middleware
 app.use(errorHandler);
