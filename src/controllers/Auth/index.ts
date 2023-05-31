@@ -155,7 +155,7 @@ export const login = async (
         hashText: userExists?.password!,
       });
 
-      const eyeDee = String(userExists._id);
+      const eyeDee = userExists._id.toString();
 
       if (isPasswordCorrect) {
         const tokenPayload: JWTPayloadType = {
