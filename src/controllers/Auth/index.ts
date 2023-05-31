@@ -157,8 +157,8 @@ export const login = async (
 
       if (isPasswordCorrect) {
         const tokenPayload: JWTPayloadType = {
-          id: userExists?._id,
-          email,
+          id: "String(userExists._id)",
+          email: email,
         };
         const JWTSecret: string = process.env.JWT_SECRET!;
         const JWTRefreshSecret: string = process.env.JWT_REFRESH_SECRET!;
