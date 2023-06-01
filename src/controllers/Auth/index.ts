@@ -53,7 +53,7 @@ export const register = async (
     //update user with the profile id;
     newAccount.profile = accountProfile._id;
 
-    const tokenPayload: JWTPayloadType = { id: newAccount._id, email };
+    const tokenPayload: JWTPayloadType = { id: String(newAccount._id), email };
     const JWTSecret: string = process.env.JWT_SECRET!;
     const JWTRefreshSecret: string = process.env.JWT_REFRESH_SECRET!;
     const JWTVerificationSecret: string = process.env.JWT_VERIFICATION_SECRET!;
@@ -138,6 +138,7 @@ export const login = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  let existingUserId: string = "";
   const { email, password }: LoginType = req.body;
   if (!email || !password) {
     const inputError: customErrorType = new Error();
@@ -150,14 +151,19 @@ export const login = async (
       email: email,
     }).populate("profile")!;
     if (userExists) {
+      existingUserId = String(userExists.id);
       const isPasswordCorrect = await bcryptCompare({
         rawText: password,
         hashText: userExists?.password!,
       });
 
+      console.log(userExists.id);
+
       if (isPasswordCorrect) {
+        const objectId = userExists._id;
+        const objectIdString = objectId.toString();
         const tokenPayload: JWTPayloadType = {
-          id: "String(userExists._id)",
+          id: objectIdString,
           email: email,
         };
         const JWTSecret: string = process.env.JWT_SECRET!;
@@ -253,7 +259,7 @@ export const refreshToken = async (
     });
     if (userExists) {
       const tokenPayload: JWTPayloadType = {
-        id: userExists!._id,
+        id: userExists!._id.toString(),
         email: userEmail,
       };
 
@@ -314,7 +320,7 @@ export const requestVerifyEmail = async (
     });
     if (userExists) {
       const tokenPayload: JWTPayloadType = {
-        id: userExists!._id,
+        id: userExists!._id.toString(),
         email: userEmail,
       };
 
@@ -422,7 +428,7 @@ export const requestResetPassword = async (
       );
 
     const tokenPayload: JWTPayloadType = {
-      id: userExists!._id,
+      id: userExists!._id.toString(),
       email: userEmail,
     };
 
