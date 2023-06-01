@@ -420,7 +420,10 @@ export const requestResetPassword = async (
       return next(new Error("You must provide your reset account email!"));
     }
 
-    const userExists = await User.findOne({ email: userEmail });
+    const userExists = await User.findOne(
+      { email: userEmail },
+      { _id: { $toString: "$_id" } }
+    );
 
     if (!userExists)
       return next(
