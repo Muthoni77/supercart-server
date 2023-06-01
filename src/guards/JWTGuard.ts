@@ -29,9 +29,6 @@ const JWTGuard = async (
       secret: tokenSecret,
     });
 
-    console.log("guardvalidcheck");
-    console.log(guardValidCheck);
-
     if (!guardValidCheck) {
       return res.status(403).json({ message: "Invalid Access Tokeniiii" });
     }
@@ -47,8 +44,6 @@ const JWTGuard = async (
 
     req.user!.id = userExists._id.toString();
     req.user!.email = guardValidCheck!.email;
-    console.log("they are here ");
-    console.log(req.user);
 
     next();
   } catch (error) {
