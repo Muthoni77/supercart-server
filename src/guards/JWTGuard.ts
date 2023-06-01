@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import verifyJWT from "../utils/jwt/verifyJWT";
 import { Document, Types } from "mongoose";
-import { CustomRequest, JWTPayloadType } from "../Types/Auth";
+import { CustomRequest, JWTPayloadType, UserType } from "../Types/Auth";
+import User from "../Models/Auth/User";
 
 const JWTGuard = async (
   req: CustomRequest,
@@ -28,12 +29,16 @@ const JWTGuard = async (
       secret: tokenSecret,
     });
 
-    if (!guardValidCheck) {
+    const userExists: UserType | null = await User.findOne({
+      email: guardValidCheck!.email,
+    });
+
+    if (!guardValidCheck || !userExists) {
       return res.status(403).json({ message: "Invalid Access Token" });
     }
     req.user = {};
 
-    req.user!.id = guardValidCheck!.id;
+    req.user!.id = userExists._id.toString();
     req.user!.email = guardValidCheck!.email;
 
     next();
