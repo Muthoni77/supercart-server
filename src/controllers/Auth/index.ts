@@ -61,7 +61,8 @@ export const register = async (
     const refreshExpiresIn: JWTExpiresInType = { expiresIn: "7d" };
     const verificationExpiresIn: JWTExpiresInType = { expiresIn: "2h" };
 
-    const OTP = Math.floor(Math.random() * 10000);
+    const randomNum = Math.floor(Math.random() * 10000);
+    const OTP = randomNum.toString().padStart(4, "0");
     const hashedOTP = await hashText({ rawText: String(OTP) });
 
     newAccount.OTP = hashedOTP;
@@ -98,17 +99,17 @@ export const register = async (
     }
 
     console.log(`The OTP sent is ${OTP}`);
-    //sendMessage
-    // const isMessageSent = await sendMessage({
-    //   recipients: ["+" + formattedPhone],
-    //   message: `Hello there ${username}, Your OTP for SuperCart is ${OTP}.`,
-    // });
+    sendMessage;
+    const isMessageSent = await sendMessage({
+      recipients: ["+" + formattedPhone],
+      message: `Hello there ${username}, Your OTP for SuperCart is ${OTP}.`,
+    });
 
-    // if (!isMessageSent) {
-    //   return res
-    //     .status(403)
-    //     .json({ success: false, message: "Failed to send the OTP" });
-    // }
+    if (!isMessageSent) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Failed to send the OTP" });
+    }
 
     const returnedUser = {
       id: newAccount._id,
