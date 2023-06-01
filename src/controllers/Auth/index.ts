@@ -53,7 +53,7 @@ export const register = async (
     //update user with the profile id;
     newAccount.profile = accountProfile._id;
 
-    const tokenPayload: JWTPayloadType = { id: String(newAccount._id), email };
+    const tokenPayload: JWTPayloadType = { id: newAccount._id, email };
     const JWTSecret: string = process.env.JWT_SECRET!;
     const JWTRefreshSecret: string = process.env.JWT_REFRESH_SECRET!;
     const JWTVerificationSecret: string = process.env.JWT_VERIFICATION_SECRET!;
@@ -147,10 +147,15 @@ export const login = async (
     return next(inputError);
   }
   try {
-    const userExists: UserType | null = await User.findOne({
-      email: email,
-    }).populate("profile")!;
+    const userExists: UserType | null = await User.findOne(
+      {
+        email: email,
+      },
+      { _id: { $toString: "$_id" } }
+    ).populate("profile")!;
     if (userExists) {
+      console.log("use exists");
+      console.log(userExists);
       existingUserId = String(userExists.id);
       const isPasswordCorrect = await bcryptCompare({
         rawText: password,
@@ -163,7 +168,7 @@ export const login = async (
         const objectId = userExists._id;
         const objectIdString = objectId.toString();
         const tokenPayload: JWTPayloadType = {
-          id: objectIdString,
+          id: String(userExists.id),
           email: email,
         };
         const JWTSecret: string = process.env.JWT_SECRET!;
@@ -259,7 +264,7 @@ export const refreshToken = async (
     });
     if (userExists) {
       const tokenPayload: JWTPayloadType = {
-        id: userExists!._id.toString(),
+        id: userExists!._id,
         email: userEmail,
       };
 
@@ -320,7 +325,7 @@ export const requestVerifyEmail = async (
     });
     if (userExists) {
       const tokenPayload: JWTPayloadType = {
-        id: userExists!._id.toString(),
+        id: userExists!._id,
         email: userEmail,
       };
 
@@ -420,10 +425,7 @@ export const requestResetPassword = async (
       return next(new Error("You must provide your reset account email!"));
     }
 
-    const userExists = await User.findOne(
-      { email: userEmail },
-      { _id: { $toString: "$_id" } }
-    );
+    const userExists = await User.findOne({ email: userEmail });
 
     if (!userExists)
       return next(
@@ -431,7 +433,7 @@ export const requestResetPassword = async (
       );
 
     const tokenPayload: JWTPayloadType = {
-      id: userExists!._id.toString(),
+      id: userExists!._id,
       email: userEmail,
     };
 
