@@ -159,7 +159,8 @@ export const login = async (
         hashText: userExists?.password!,
       });
 
-      console.log(userExists.id);
+      console.log("userExists.id.valueOf()");
+      console.log(userExists.id.valueOf());
 
       if (isPasswordCorrect) {
         const objectId = userExists._id;
