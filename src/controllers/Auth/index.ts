@@ -155,11 +155,11 @@ export const login = async (
         hashText: userExists?.password!,
       });
 
-      const userIdString = userExists._id.toString().trim().replace("/ /g", "");
+      console.log(userExists.id);
 
       if (isPasswordCorrect) {
         const tokenPayload: JWTPayloadType = {
-          id: userIdString,
+          id: userExists.id,
           email: email,
         };
         const JWTSecret: string = process.env.JWT_SECRET!;
