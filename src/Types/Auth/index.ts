@@ -26,7 +26,7 @@ export interface UserType extends Document {
 }
 
 export interface JWTPayloadType {
-  id:  string;
+  id: Types.ObjectId | string;
   email: string;
 }
 export interface JWTExpiresInType {
