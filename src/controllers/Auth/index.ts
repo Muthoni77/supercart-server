@@ -163,7 +163,7 @@ export const login = async (
         console.log("existingUserId");
         console.log(existingUserId);
         const tokenPayload: JWTPayloadType = {
-          id: userExists.emailVerified,
+          id: String(userExists.emailVerified),
           email: email,
         };
         const JWTSecret: string = process.env.JWT_SECRET!;
