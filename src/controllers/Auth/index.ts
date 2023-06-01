@@ -147,12 +147,9 @@ export const login = async (
     return next(inputError);
   }
   try {
-    const userExists: UserType | null = await User.findOne(
-      {
-        email: email,
-      },
-      { _id: { $toString: "$_id" } }
-    ).populate("profile")!;
+    const userExists: UserType | null = await User.findOne({
+      email: email,
+    }).populate("profile")!;
     if (userExists) {
       console.log("use exists");
       console.log(userExists);
