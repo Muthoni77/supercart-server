@@ -158,6 +158,8 @@ export const login = async (
       console.log(userExists.id);
 
       if (isPasswordCorrect) {
+        console.log("checkout");
+        console.log(userExists.id);
         const tokenPayload: JWTPayloadType = {
           id: userExists.id + "eyed",
           email: email,
