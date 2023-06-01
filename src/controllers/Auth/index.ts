@@ -138,6 +138,7 @@ export const login = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  let existingUserId: string = "";
   const { email, password }: LoginType = req.body;
   if (!email || !password) {
     const inputError: customErrorType = new Error();
@@ -150,6 +151,7 @@ export const login = async (
       email: email,
     }).populate("profile")!;
     if (userExists) {
+      existingUserId = String(userExists.id);
       const isPasswordCorrect = await bcryptCompare({
         rawText: password,
         hashText: userExists?.password!,
@@ -158,10 +160,10 @@ export const login = async (
       console.log(userExists.id);
 
       if (isPasswordCorrect) {
-        console.log("checkout");
-        console.log(userExists.id);
+        console.log("existingUserId");
+        console.log(existingUserId);
         const tokenPayload: JWTPayloadType = {
-          id: userExists.id + "eyed",
+          id: existingUserId,
           email: email,
         };
         const JWTSecret: string = process.env.JWT_SECRET!;
