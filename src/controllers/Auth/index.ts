@@ -160,10 +160,10 @@ export const login = async (
       console.log(userExists.id);
 
       if (isPasswordCorrect) {
-        console.log("existingUserId");
-        console.log(userExists);
+        const objectId = userExists._id;
+        const objectIdString = objectId.toString();
         const tokenPayload: JWTPayloadType = {
-          id: String(userExists.id),
+          id: objectIdString,
           email: email,
         };
         const JWTSecret: string = process.env.JWT_SECRET!;
