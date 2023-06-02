@@ -16,15 +16,13 @@ export const generateAccessToken = async () => {
   const consumerKey = process.env.MPESA_CONSUMER_KEY;
   const consumerSecret = process.env.MPESA_CONSUMER_SECRET;
 
-  console.log("Okay");
+  const encodedString = Buffer.from(
+    `${consumerKey}:${consumerSecret}`,
+    "utf-8"
+  ).toString("base64");
 
-  // const encodedString = Buffer.from(
-  //   `${consumerKey}:${consumerSecret}`,
-  //   "base64"
-  // ).toString();
-
-  // console.log("encoded");
-  // console.log(encodedString);
+  console.log("encoded");
+  console.log(encodedString);
 
   // const response = await axios({
   //   method: "get",
