@@ -10,8 +10,12 @@ export const handleMpesaCheckout = async (
   res: Response,
   next: NextFunction
 ) => {
-  const accessToken = await generateAccessToken(next);
-  res.status(200).json({ message: "Handling checkout", token: accessToken });
+  try {
+    const accessToken = await generateAccessToken(next);
+    res.status(200).json({ message: "Handling checkout", token: accessToken });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const generateAccessToken = async (
