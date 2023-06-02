@@ -10,14 +10,14 @@ export const sendEmailActivation = async ({
     let transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "supercart254@gmail.com",
-        pass: "umsyawebxjbobgif",
+        user: process.env.NODEMAILER_EMAIL,
+        pass: process.env.NODEMAILER_PASSWORD,
       },
     });
 
     // send mail with defined transport object
     let info = await transporter.sendMail({
-      from: '"SuperCart🛍️" <supercart254@gmail.com>', // sender address
+      from: '"SuperCart🛍️" <jaysmith254321@gmail.com>', // sender address
       to: recipientEmail, // list of receivers
       subject: "Welcome to SuperCart", // Subject line
       html: `
@@ -77,14 +77,14 @@ export const sendRequestPasswordChangeEmail = async ({
     let transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "supercart254@gmail.com",
+        user: "jaysmith254321@gmail.com",
         pass: "umsyawebxjbobgif",
       },
     });
 
     // send mail with defined transport object
     let info = await transporter.sendMail({
-      from: '"SuperCart🛍️" <supercart254@gmail.com>', // sender address
+      from: '"SuperCart🛍️" <jaysmith254321@gmail.com>', // sender address
       to: recipientEmail, // list of receivers
       subject: "Reset Account Password ", // Subject line
       html: `
