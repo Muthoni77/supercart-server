@@ -19,7 +19,7 @@ export const generateAccessToken = async () => {
   const encodedString = Buffer.from(
     consumerKey + ":" + consumerSecret,
     "base64"
-  );
+  ).toString();
 
   const response = await axios({
     method: "get",
