@@ -8,6 +8,7 @@ export const handleMpesaCheckout = async (
   req: CustomRequest,
   res: Response
 ) => {
+  await generateAccessToken();
   res.status(200).json({ message: "Handling checkout" });
 };
 
