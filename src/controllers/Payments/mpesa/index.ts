@@ -1,5 +1,8 @@
 import { Response } from "express";
 import { CustomRequest } from "../../../Types/Auth";
+import axios from "axios";
+
+const mpesaEndpoint = process.env.MPESA_ENDPOINT;
 
 export const handleMpesaCheckout = async (
   req: CustomRequest,
@@ -9,5 +12,23 @@ export const handleMpesaCheckout = async (
 };
 
 export const generateAccessToken = async () => {
-  
+  const consumerKey = process.env.MPESA_CONSUMER_KEY;
+  const consumerSecret = process.env.MPESA_CONSUMER_SECRET;
+
+  const encodedString = Buffer.from(
+    consumerKey + ":" + consumerSecret,
+    "base64"
+  );
+
+  const response = await axios({
+    method: "get",
+    url: mpesaEndpoint,
+    headers: {
+      Authorization: `Basic ${encodedString}`,
+    },
+  });
+
+  console.log("response");
+  console.log(response);
+  console.log(response.data);
 };
