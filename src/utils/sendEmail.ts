@@ -77,8 +77,8 @@ export const sendRequestPasswordChangeEmail = async ({
     let transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "jaysmith254321@gmail.com",
-        pass: "umsyawebxjbobgif",
+        user: process.env.NODEMAILER_EMAIL,
+        pass: process.env.NODEMAILER_PASSWORD,
       },
     });
 
