@@ -21,7 +21,7 @@ export const generateAccessToken = async () => {
     "utf-8"
   ).toString("base64");
 
-  console.log("encoded");
+  console.log("encoded ");
   console.log(encodedString);
 
   // const response = await axios({
