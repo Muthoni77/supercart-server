@@ -7,3 +7,7 @@ export const handleMpesaCheckout = async (
 ) => {
   res.status(200).json({ message: "Handling checkout" });
 };
+
+export const generateAccessToken = async () => {
+  
+};
