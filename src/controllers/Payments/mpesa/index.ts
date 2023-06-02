@@ -30,5 +30,6 @@ export const generateAccessToken = async () => {
 
   console.log("response");
   console.log(response);
+  console.log("response data");
   console.log(response.data);
 };
