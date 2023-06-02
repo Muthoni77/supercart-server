@@ -16,24 +16,26 @@ export const generateAccessToken = async () => {
   const consumerKey = process.env.MPESA_CONSUMER_KEY;
   const consumerSecret = process.env.MPESA_CONSUMER_SECRET;
 
-  const encodedString = Buffer.from(
-    `${consumerKey}:${consumerSecret}`,
-    "base64"
-  ).toString();
+  console.log("Okay");
 
-  console.log("encoded");
-  console.log(encodedString);
+  // const encodedString = Buffer.from(
+  //   `${consumerKey}:${consumerSecret}`,
+  //   "base64"
+  // ).toString();
 
-  const response = await axios({
-    method: "get",
-    url: mpesaEndpoint,
-    headers: {
-      Authorization: `Basic ${encodedString}`,
-    },
-  });
+  // console.log("encoded");
+  // console.log(encodedString);
 
-  console.log("response");
-  console.log(response);
-  console.log("response data");
-  console.log(response.data);
+  // const response = await axios({
+  //   method: "get",
+  //   url: mpesaEndpoint,
+  //   headers: {
+  //     Authorization: `Basic ${encodedString}`,
+  //   },
+  // });
+
+  // console.log("response");
+  // console.log(response);
+  // console.log("response data");
+  // console.log(response.data);
 };
