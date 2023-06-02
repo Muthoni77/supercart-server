@@ -21,19 +21,16 @@ export const generateAccessToken = async () => {
     "utf-8"
   ).toString("base64");
 
-  console.log("encoded ");
-  console.log(encodedString);
+  const response = await axios({
+    method: "get",
+    url: mpesaEndpoint,
+    headers: {
+      Authorization: `Basic ${encodedString}`,
+    },
+  });
 
-  // const response = await axios({
-  //   method: "get",
-  //   url: mpesaEndpoint,
-  //   headers: {
-  //     Authorization: `Basic ${encodedString}`,
-  //   },
-  // });
-
-  // console.log("response");
-  // console.log(response);
-  // console.log("response data");
-  // console.log(response.data);
+  console.log("response");
+  console.log(response);
+  console.log("response data");
+  console.log(response.data);
 };
