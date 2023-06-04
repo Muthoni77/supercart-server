@@ -5,7 +5,14 @@ import {
   AccessTokenType,
   StkPushRequestBodyType,
 } from "../../../Types/Payments/Mpesa";
-import { getTimeStamp, getTokenPassword } from "../../../utils/payments/mpesa";
+import {
+  generateSTKPushPassword,
+  getTimeStamp,
+  getTokenPassword,
+} from "../../../utils/payments/mpesa";
+
+const BusinessShortCode = process.env.MPESA_BUSINESS_SHORTCODE;
+const PassKey = process.env.MPESA_PASSKEY;
 
 export const handleMpesaCheckout = async (
   req: CustomRequest,
@@ -16,23 +23,29 @@ export const handleMpesaCheckout = async (
     const mpesaEndpoint = process.env.MPESA_TOKEN_ENDPOINT;
     const accessToken = await generateAccessToken(next);
     const Timestamp = await getTimeStamp();
-
-    const requestBody: StkPushRequestBodyType = {
-      BusinessShortCode: "174379",
-      Password:
-        "MTc0Mzc5YmZiMjc5ZjlhYTPVyMExQN2bvLyzuBfqkTSSnYZKG3hkwUVjODkzMDU5YjEwZjc4ZTPVyMExQN2bvLyzuBfqkTSSnYZKG3hkwUV1NjI3",
+    const Password = await generateSTKPushPassword({
+      BusinessShortCode: BusinessShortCode!,
+      PassKey: PassKey!,
       Timestamp,
-      TransactionType: "CustomerPayBillOnline",
-      Amount: "1",
-      PartyA: "254708374149",
-      PartyB: "174379",
-      PhoneNumber: "254708374149",
-      CallBackURL: "https://mydomain.com/pat",
-      AccountReference: "Test",
-      TransactionDesc: "Test",
-    };
+    });
 
-    res.status(200).json({ message: "Handling checkout", token: accessToken });
+    // const requestBody: StkPushRequestBodyType = {
+    //   BusinessShortCode: "174379",
+    //   Password: "",
+    //   Timestamp,
+    //   TransactionType: "CustomerPayBillOnline",
+    //   Amount: "1",
+    //   PartyA: "254708374149",
+    //   PartyB: "174379",
+    //   PhoneNumber: "254708374149",
+    //   CallBackURL: "https://mydomain.com/pat",
+    //   AccountReference: "Test",
+    //   TransactionDesc: "Test",
+    // };
+
+    res
+      .status(200)
+      .json({ message: "Handling checkout", token: accessToken, Password });
   } catch (error) {
     next(error);
   }
