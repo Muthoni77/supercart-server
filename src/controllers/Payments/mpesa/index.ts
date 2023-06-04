@@ -84,6 +84,8 @@ export const handleMpesaCheckout = async (
 
     res.status(200).json({
       responseCode: response?.data?.ResponseCode,
+      MerchantRequestID: response?.data?.MerchantRequestID,
+      CheckoutRequestID: response?.data?.CheckoutRequestID,
       message: response?.data?.ResponseDescription,
     });
   } catch (error) {
