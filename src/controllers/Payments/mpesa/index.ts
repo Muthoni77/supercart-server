@@ -103,7 +103,6 @@ export const handleMpesaCallback = async (
     console.log("Callback response from Mpesa is here");
     console.log(req.body?.stkCallback?.ResultDesc);
     console.log(req.body);
-
     res
       .status(200)
       .json({ message: req.body?.stkCallback?.ResultDesc, body: req.body });
