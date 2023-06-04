@@ -73,7 +73,7 @@ export const handleMpesaCheckout = async (
       TransactionDesc: "SuperCart online store checkout",
     };
 
-    const response = await axios({
+    const response: any = await axios({
       method: "POST",
       url: mpesaEndpoint,
       data: requestBody,
@@ -82,12 +82,10 @@ export const handleMpesaCheckout = async (
       },
     });
 
-    console.log("response");
-    console.log(response);
-
-    res
-      .status(200)
-      .json({ message: "Handling checkout", token: accessToken, Password });
+    res.status(200).json({
+      responseCode: response?.data?.ResponseCode,
+      message: response?.data?.ResponseDescription,
+    });
   } catch (error) {
     next(error);
   }
@@ -106,6 +104,41 @@ export const handleMpesaCallback = async (
     res
       .status(200)
       .json({ message: req.body?.stkCallback?.ResultDesc, body: req.body });
+
+    //sample reponses
+    //       {
+    //   Body: {
+    //     stkCallback: {
+    //       MerchantRequestID: '22261-70954500-1',
+    //       CheckoutRequestID: 'ws_CO_04062023135927448704783187',
+    //       ResultCode: 1032,
+    //       ResultDesc: 'Request cancelled by user'
+    //     }
+    //   }
+    // }
+
+    // undefined
+    // {
+    //   Body: {
+    //     stkCallback: {
+    //       MerchantRequestID: '20605-88526469-1',
+    //       CheckoutRequestID: 'ws_CO_04062023140053824704783187',
+    //       ResultCode: 2001,
+    //       ResultDesc: 'The initiator information is invalid.'
+    //     }
+    //   }
+    // }
+
+    // {
+    //   Body: {
+    //     stkCallback: {
+    //       MerchantRequestID: '23296-14443029-1',
+    //       CheckoutRequestID: 'ws_CO_04062023140040383704783187',
+    //       ResultCode: 1,
+    //       ResultDesc: 'The balance is insufficient for the transaction.'
+    //     }
+    //   }
+    // }
   } catch (error) {
     next(error);
   }
