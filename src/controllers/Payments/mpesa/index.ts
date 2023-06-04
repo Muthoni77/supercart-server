@@ -4,6 +4,7 @@ import axios from "axios";
 import {
   AccessTokenType,
   StkPushRequestBodyType,
+  StkPushUserRequestBodyType,
 } from "../../../Types/Payments/Mpesa";
 import {
   generateSTKPushPassword,
@@ -11,8 +12,9 @@ import {
   getTokenPassword,
 } from "../../../utils/payments/mpesa";
 
-const BusinessShortCode = process.env.MPESA_BUSINESS_SHORTCODE;
-const PassKey = process.env.MPESA_PASSKEY;
+const BusinessShortCode = process.env.MPESA_BUSINESS_SHORTCODE!;
+const PassKey = process.env.MPESA_PASSKEY!;
+const CallBackURL = process.env.MPESA_CALLBACK_URL!;
 
 export const handleMpesaCheckout = async (
   req: CustomRequest,
@@ -20,28 +22,41 @@ export const handleMpesaCheckout = async (
   next: NextFunction
 ) => {
   try {
-    const mpesaEndpoint = process.env.MPESA_TOKEN_ENDPOINT;
+    const { Amount, PhoneNumber }: StkPushUserRequestBodyType = req.body;
+    const mpesaEndpoint = process.env.MPESA_STKPUSH_ENDPOINT;
     const accessToken = await generateAccessToken(next);
     const Timestamp = await getTimeStamp();
     const Password = await generateSTKPushPassword({
-      BusinessShortCode: BusinessShortCode!,
-      PassKey: PassKey!,
+      BusinessShortCode,
+      PassKey,
       Timestamp,
     });
 
-    // const requestBody: StkPushRequestBodyType = {
-    //   BusinessShortCode: "174379",
-    //   Password: "",
-    //   Timestamp,
-    //   TransactionType: "CustomerPayBillOnline",
-    //   Amount: "1",
-    //   PartyA: "254708374149",
-    //   PartyB: "174379",
-    //   PhoneNumber: "254708374149",
-    //   CallBackURL: "https://mydomain.com/pat",
-    //   AccountReference: "Test",
-    //   TransactionDesc: "Test",
-    // };
+    const requestBody: StkPushRequestBodyType = {
+      BusinessShortCode,
+      Password,
+      Timestamp,
+      TransactionType: "CustomerPayBillOnline",
+      Amount,
+      PartyA: PhoneNumber,
+      PartyB: BusinessShortCode,
+      PhoneNumber,
+      CallBackURL,
+      AccountReference: "SuperCart Checkout",
+      TransactionDesc: "SuperCart online store checkout",
+    };
+
+    const response = await axios({
+      method: "POST",
+      url: mpesaEndpoint,
+      data: requestBody,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    console.log("response");
+    console.log(response);
 
     res
       .status(200)
