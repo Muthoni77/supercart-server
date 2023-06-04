@@ -2,8 +2,7 @@ import { NextFunction, Response } from "express";
 import { CustomRequest } from "../../../Types/Auth";
 import axios from "axios";
 import { AccessTokenType } from "../../../Types/Payments/Mpesa";
-
-const mpesaEndpoint = process.env.MPESA_ENDPOINT;
+import { getTokenPassword } from "../../../utils/payments/mpesa";
 
 export const handleMpesaCheckout = async (
   req: CustomRequest,
@@ -22,13 +21,13 @@ export const generateAccessToken = async (
   next: NextFunction
 ): Promise<string | null> => {
   try {
-    const consumerKey = process.env.MPESA_CONSUMER_KEY;
-    const consumerSecret = process.env.MPESA_CONSUMER_SECRET;
+    const mpesaEndpoint = process.env.MPESA_TOKEN_ENDPOINT;
 
-    const encodedString = Buffer.from(
-      `${consumerKey}:${consumerSecret}`,
-      "utf-8"
-    ).toString("base64");
+    const encodedString: string | boolean = await getTokenPassword();
+
+    if (!encodedString) {
+      next(new Error("Failed to generate token password"));
+    }
 
     const response = await axios({
       method: "get",
