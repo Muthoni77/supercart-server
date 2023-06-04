@@ -30,7 +30,7 @@ const JWTGuard = async (
     });
 
     if (!guardValidCheck) {
-      return res.status(403).json({ message: "Invalid Access Tokeniiii" });
+      return res.status(403).json({ message: "Invalid Access Token" });
     }
 
     const userExists: UserType | null = await User.findOne({
