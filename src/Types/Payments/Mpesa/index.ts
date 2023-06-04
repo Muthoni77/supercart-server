@@ -16,3 +16,8 @@ export interface StkPushRequestBodyType {
   AccountReference: string;
   TransactionDesc: string;
 }
+export interface StkPushGeneratePasswordBodyType {
+  BusinessShortCode: string;
+  PassKey: string;
+  Timestamp: string;
+}
