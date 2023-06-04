@@ -1,9 +1,19 @@
 import { StkPushGeneratePasswordBodyType } from "../../../Types/Payments/Mpesa";
+import { format } from "date-fns";
 
 const consumerKey = process.env.MPESA_CONSUMER_KEY;
 const consumerSecret = process.env.MPESA_CONSUMER_SECRET;
 
-export const getTokenPassword = async (): Promise<string | boolean> => {
+export const getTimeStamp = async (): Promise<string> => {
+  try {
+    const timeStamp = format(Date.now(), "yyyyMMddHHmmss");
+    return timeStamp;
+  } catch (error) {
+    console.log(error);
+    throw Error("Failed to create timestamp");
+  }
+};
+export const getTokenPassword = async (): Promise<string> => {
   try {
     const encodedString = Buffer.from(
       `${consumerKey}:${consumerSecret}`,
@@ -13,7 +23,7 @@ export const getTokenPassword = async (): Promise<string | boolean> => {
     return encodedString;
   } catch (error) {
     console.log(error);
-    return false;
+    throw Error("Failed to create token password");
   }
 };
 
@@ -21,16 +31,16 @@ export const generateSTKPushPassword = async ({
   BusinessShortCode,
   PassKey,
   Timestamp,
-}: StkPushGeneratePasswordBodyType): Promise<string | boolean> => {
+}: StkPushGeneratePasswordBodyType): Promise<string> => {
   try {
     const encodedString = Buffer.from(
-      `${consumerKey}:${consumerSecret}`,
+      `${BusinessShortCode}${PassKey}${Timestamp}`,
       "utf-8"
     ).toString("base64");
 
     return encodedString;
   } catch (error) {
     console.log(error);
-    return false;
+    throw Error("Failed to generate token password");
   }
 };
