@@ -1,8 +1,11 @@
 import { NextFunction, Response } from "express";
 import { CustomRequest } from "../../../Types/Auth";
 import axios from "axios";
-import { AccessTokenType, StkPushRequestBodyType } from "../../../Types/Payments/Mpesa";
-import { getTokenPassword } from "../../../utils/payments/mpesa";
+import {
+  AccessTokenType,
+  StkPushRequestBodyType,
+} from "../../../Types/Payments/Mpesa";
+import { getTimeStamp, getTokenPassword } from "../../../utils/payments/mpesa";
 
 export const handleMpesaCheckout = async (
   req: CustomRequest,
@@ -12,12 +15,13 @@ export const handleMpesaCheckout = async (
   try {
     const mpesaEndpoint = process.env.MPESA_TOKEN_ENDPOINT;
     const accessToken = await generateAccessToken(next);
+    const Timestamp = await getTimeStamp();
 
     const requestBody: StkPushRequestBodyType = {
       BusinessShortCode: "174379",
       Password:
         "MTc0Mzc5YmZiMjc5ZjlhYTPVyMExQN2bvLyzuBfqkTSSnYZKG3hkwUVjODkzMDU5YjEwZjc4ZTPVyMExQN2bvLyzuBfqkTSSnYZKG3hkwUV1NjI3",
-      Timestamp: "20160216165627",
+      Timestamp,
       TransactionType: "CustomerPayBillOnline",
       Amount: "1",
       PartyA: "254708374149",
@@ -27,7 +31,6 @@ export const handleMpesaCheckout = async (
       AccountReference: "Test",
       TransactionDesc: "Test",
     };
-
 
     res.status(200).json({ message: "Handling checkout", token: accessToken });
   } catch (error) {
@@ -41,11 +44,7 @@ export const generateAccessToken = async (
   try {
     const mpesaEndpoint = process.env.MPESA_TOKEN_ENDPOINT;
 
-    const encodedString: string | boolean = await getTokenPassword();
-
-    if (!encodedString) {
-      next(new Error("Failed to generate token password"));
-    }
+    const encodedString = await getTokenPassword();
 
     const response = await axios({
       method: "get",
