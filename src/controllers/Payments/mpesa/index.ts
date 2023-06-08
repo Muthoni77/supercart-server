@@ -122,8 +122,10 @@ export const handleMpesaCallback = async (
         req.body?.Body?.stkCallback?.CallbackMetadata?.Item;
       const Amount = CallbackMetadata[0].Value;
       const MpesaReceiptNumber = CallbackMetadata[1].Value;
-      const PhoneNumber = CallbackMetadata[2].Value;
+      //unused
+      const Balance = CallbackMetadata[2].Value;
       const TransactionDate = CallbackMetadata[3].Value;
+      const PhoneNumber = CallbackMetadata[4].Value;
 
       console.log("Amount: ", Amount);
       console.log("MpesaReceiptNumber: ", MpesaReceiptNumber);
