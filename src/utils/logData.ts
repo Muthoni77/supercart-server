@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 export const logData = async () => {
-  fs.writeFile(filePath, content, { flag: "a" }, (err) => {
+  fs.writeFile(filePath, content, { flag: "a" }, (err: any) => {
     if (err) {
       console.error("An error occurred while writing to the file:", err);
       return;
