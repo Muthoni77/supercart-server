@@ -107,7 +107,8 @@ export const handleMpesaCallback = async (
 
 
     if(ResultCode===0){
-      
+      const CallbackMetadata=req.body?.Body?.stkCallback?.CallbackMetadata?.Item;
+      const Amount=CallbackMetadata[0].Value;
         "CallbackMetadata": {                
             "Item": [{                        
                "Name": "Amount",                        
