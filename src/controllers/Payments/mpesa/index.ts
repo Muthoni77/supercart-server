@@ -130,10 +130,11 @@ export const handleMpesaCallback = async (
       console.log("TransactionDate: ", TransactionDate);
       console.log("PhoneNumber: ", PhoneNumber);
 
-      const content = `Method:M-Pesa\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\nAmount: ${Amount}\nDate: ${TransactionDate}\n\n`;
+      const content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\nAmount: ${Amount}\nDate: ${TransactionDate}\n\n`;
       logData({ filePath, content });
+      logData({ filePath, content: JSON.stringify(CallbackMetadata) });
     } else {
-      const content = `Method:M-Pesa\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\n\n`;
+      const content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\n\n`;
       logData({ filePath, content });
     }
   } catch (error) {
