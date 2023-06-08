@@ -16,3 +16,8 @@ export interface MessageBodyType {
   recipients: string[];
   message: string;
 }
+
+export interface LogDataBodyType {
+  content: string;
+  filePath: string;
+}
