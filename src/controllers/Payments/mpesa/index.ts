@@ -11,6 +11,8 @@ import {
   getTimeStamp,
   getTokenPassword,
 } from "../../../utils/payments/mpesa";
+import { logData } from "../../../utils/logData";
+import path from "path";
 
 //Environment Variables
 const BusinessShortCode = process.env.MPESA_BUSINESS_SHORTCODE!;
@@ -100,47 +102,38 @@ export const handleMpesaCallback = async (
   next: NextFunction
 ) => {
   try {
-    console.log("Callback response from Mpesa is here");
-    console.log(req.body?.stkCallback?.ResultDesc);
-    console.log(req.body);
-    res
-      .status(200)
-      .json({ message: req.body?.stkCallback?.ResultDesc, body: req.body });
+    const CheckoutRequestID = req.body?.Body?.stkCallback?.CheckoutRequestID;
+    const MerchantRequestID = req.body?.Body?.stkCallback?.MerchantRequestID;
+    const ResultDesc = req.body?.Body?.stkCallback?.ResultDesc;
+    const ResultCode = req.body?.Body?.stkCallback?.ResultCode;
 
-    //sample reponses
-    //       {
-    //   Body: {
-    //     stkCallback: {
-    //       MerchantRequestID: '22261-70954500-1',
-    //       CheckoutRequestID: 'ws_CO_04062023135927448704783187',
-    //       ResultCode: 1032,
-    //       ResultDesc: 'Request cancelled by user'
-    //     }
-    //   }
-    // }
+    const filePath: string = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "logs",
+      "payments",
+      "file.txt"
+    );
 
-    // undefined
-    // {
-    //   Body: {
-    //     stkCallback: {
-    //       MerchantRequestID: '20605-88526469-1',
-    //       CheckoutRequestID: 'ws_CO_04062023140053824704783187',
-    //       ResultCode: 2001,
-    //       ResultDesc: 'The initiator information is invalid.'
-    //     }
-    //   }
-    // }
+    if (ResultCode === 0) {
+      const CallbackMetadata =
+        req.body?.Body?.stkCallback?.CallbackMetadata?.Item;
+      const Amount = CallbackMetadata[0].Value;
+      const MpesaReceiptNumber = CallbackMetadata[1].Value;
+      //unused
+      const Balance = CallbackMetadata[2].Value;
+      const TransactionDate = CallbackMetadata[3].Value;
+      const PhoneNumber = CallbackMetadata[4].Value;
 
-    // {
-    //   Body: {
-    //     stkCallback: {
-    //       MerchantRequestID: '23296-14443029-1',
-    //       CheckoutRequestID: 'ws_CO_04062023140040383704783187',
-    //       ResultCode: 1,
-    //       ResultDesc: 'The balance is insufficient for the transaction.'
-    //     }
-    //   }
-    // }
+      const content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\nAmount: ${Amount}\nDate: ${TransactionDate}\n\n`;
+      logData({ filePath, content });
+      logData({ filePath, content: JSON.stringify(CallbackMetadata) });
+    } else {
+      const content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\n\n`;
+      logData({ filePath, content });
+    }
   } catch (error) {
     next(error);
   }
