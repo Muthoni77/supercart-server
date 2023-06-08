@@ -120,18 +120,6 @@ export const handleMpesaCallback = async (
       console.log("MpesaReceiptNumber: ", MpesaReceiptNumber);
       console.log("TransactionDate: ", TransactionDate);
       console.log("PhoneNumber: ", PhoneNumber);
-
-      const inputDate = TransactionDate;
-      const year = inputDate.slice(0, 4);
-      const month = inputDate.slice(4, 6);
-      const day = inputDate.slice(6, 8);
-      const hours = inputDate.slice(8, 10);
-      const minutes = inputDate.slice(10, 12);
-      const seconds = inputDate.slice(12, 14);
-
-      const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-      console.log("Transaction date");
-      console.log(formattedDate);
     }
 
     res
