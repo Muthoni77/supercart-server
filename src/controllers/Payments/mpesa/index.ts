@@ -127,11 +127,6 @@ export const handleMpesaCallback = async (
       const TransactionDate = CallbackMetadata[3].Value;
       const PhoneNumber = CallbackMetadata[4].Value;
 
-      console.log("Amount: ", Amount);
-      console.log("MpesaReceiptNumber: ", MpesaReceiptNumber);
-      console.log("TransactionDate: ", TransactionDate);
-      console.log("PhoneNumber: ", PhoneNumber);
-
       const content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\nAmount: ${Amount}\nDate: ${TransactionDate}\n\n`;
       logData({ filePath, content });
       logData({ filePath, content: JSON.stringify(CallbackMetadata) });
