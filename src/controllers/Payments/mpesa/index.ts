@@ -105,38 +105,38 @@ export const handleMpesaCallback = async (
     const ResultDesc = req.body?.Body?.stkCallback?.ResultDesc;
     const ResultCode = req.body?.Body?.stkCallback?.ResultCode;
 
+    console.log("ResultCode :", ResultCode);
+    console.log("ResultDesc :", ResultDesc);
 
-    if(ResultCode===0){
-      const CallbackMetadata=req.body?.Body?.stkCallback?.CallbackMetadata?.Item;
-      const Amount=CallbackMetadata[0].Value;
-      const MpesaReceiptNumber=CallbackMetadata[1].Value;
-      const TransactionDate=CallbackMetadata[2].Value;
-      const PhoneNumber=CallbackMetadata[3].Value;
-        "CallbackMetadata": {                
-            "Item": [{                        
-               "Name": "Amount",                        
-               "Value": 1.00                    
-            },                    
-            {                        
-               "Name": "MpesaReceiptNumber",                        
-               "Value": "NLJ7RT61SV"                    
-            },                    
-            {                        
-               "Name": "TransactionDate",                        
-               "Value": 20191219102115                    
-            },                    
-            {                        
-               "Name": "PhoneNumber",                        
-               "Value": 254708374149                    
-            }]            
-         } 
+    if (ResultCode === 0) {
+      const CallbackMetadata =
+        req.body?.Body?.stkCallback?.CallbackMetadata?.Item;
+      const Amount = CallbackMetadata[0].Value;
+      const MpesaReceiptNumber = CallbackMetadata[1].Value;
+      const PhoneNumber = CallbackMetadata[2].Value;
+      const TransactionDate = CallbackMetadata[3].Value;
+
+      console.log("Amount: ", Amount);
+      console.log("MpesaReceiptNumber: ", MpesaReceiptNumber);
+      console.log("TransactionDate: ", TransactionDate);
+      console.log("PhoneNumber: ", PhoneNumber);
+
+      const inputDate = TransactionDate;
+      const year = inputDate.slice(0, 4);
+      const month = inputDate.slice(4, 6);
+      const day = inputDate.slice(6, 8);
+      const hours = inputDate.slice(8, 10);
+      const minutes = inputDate.slice(10, 12);
+      const seconds = inputDate.slice(12, 14);
+
+      const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      console.log("Transaction date");
+      console.log(formattedDate);
     }
 
     res
       .status(200)
       .json({ message: req.body?.stkCallback?.ResultDesc, body: req.body });
-
-    
   } catch (error) {
     next(error);
   }
