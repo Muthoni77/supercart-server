@@ -1,0 +1,14 @@
+Method:MPesa
+Result code: 1032
+Result Description: Request cancelled by user
+
+Method:MPesa
+Result code: 2001
+Result Description: The initiator information is invalid.
+
+Method:MPesa
+Result code: 0
+Result Description: The service request is processed successfully.
+Amount: 1
+Date: 20230608214439
+
