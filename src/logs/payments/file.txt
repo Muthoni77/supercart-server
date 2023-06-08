@@ -18,3 +18,12 @@ MerchantRequestID: 10477-107219655-1
 Result code: 1032
 Result Description: Request cancelled by user
 
+Method:MPesa
+CheckoutRequestID: ws_CO_08062023215525342704783187
+MerchantRequestID: 44399-11317968-1
+Result code: 0
+Result Description: The service request is processed successfully.
+Amount: 1
+Date: 20230608215425
+
+[{"Name":"Amount","Value":1},{"Name":"MpesaReceiptNumber","Value":"RF84KX8OQ8"},{"Name":"Balance"},{"Name":"TransactionDate","Value":20230608215425},{"Name":"PhoneNumber","Value":254704783187}]
