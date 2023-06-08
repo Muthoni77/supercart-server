@@ -110,6 +110,8 @@ export const handleMpesaCallback = async (
       const CallbackMetadata=req.body?.Body?.stkCallback?.CallbackMetadata?.Item;
       const Amount=CallbackMetadata[0].Value;
       const MpesaReceiptNumber=CallbackMetadata[1].Value;
+      const TransactionDate=CallbackMetadata[2].Value;
+      const PhoneNumber=CallbackMetadata[3].Value;
         "CallbackMetadata": {                
             "Item": [{                        
                "Name": "Amount",                        
