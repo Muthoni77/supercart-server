@@ -12,3 +12,9 @@ Result Description: The service request is processed successfully.
 Amount: 1
 Date: 20230608214439
 
+Method:MPesa
+CheckoutRequestID: ws_CO_08062023215331244704783187
+MerchantRequestID: 10477-107219655-1
+Result code: 1032
+Result Description: Request cancelled by user
+
