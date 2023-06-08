@@ -107,6 +107,16 @@ export const handleMpesaCallback = async (
     const ResultDesc = req.body?.Body?.stkCallback?.ResultDesc;
     const ResultCode = req.body?.Body?.stkCallback?.ResultCode;
 
+    const filePath: string = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "logs",
+      "payments",
+      "file.txt"
+    );
+
     if (ResultCode === 0) {
       const CallbackMetadata =
         req.body?.Body?.stkCallback?.CallbackMetadata?.Item;
@@ -119,21 +129,13 @@ export const handleMpesaCallback = async (
       console.log("MpesaReceiptNumber: ", MpesaReceiptNumber);
       console.log("TransactionDate: ", TransactionDate);
       console.log("PhoneNumber: ", PhoneNumber);
-      const filePath: string = path.join(
-        __dirname,
-        "..",
-        "..",
-        "logs",
-        "payments",
-        "file.txt"
-      );
 
-      const content = `\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\nAmount: ${Amount}\nDate: ${TransactionDate}`;
+      const content = `Method:M-Pesa\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\nAmount: ${Amount}\nDate: ${TransactionDate}\n\n`;
       logData({ filePath, content });
     } else {
+      const content = `Method:M-Pesa\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\n\n`;
+      logData({ filePath, content });
     }
-
-    const filePath = "";
   } catch (error) {
     next(error);
   }
