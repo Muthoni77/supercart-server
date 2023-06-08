@@ -26,4 +26,3 @@ Result Description: The service request is processed successfully.
 Amount: 1
 Date: 20230608215425
 
-[{"Name":"Amount","Value":1},{"Name":"MpesaReceiptNumber","Value":"RF84KX8OQ8"},{"Name":"Balance"},{"Name":"TransactionDate","Value":20230608215425},{"Name":"PhoneNumber","Value":254704783187}]
