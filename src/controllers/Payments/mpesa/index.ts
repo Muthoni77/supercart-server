@@ -11,6 +11,8 @@ import {
   getTimeStamp,
   getTokenPassword,
 } from "../../../utils/payments/mpesa";
+import { logData } from "../../../utils/logData";
+import path from "path";
 
 //Environment Variables
 const BusinessShortCode = process.env.MPESA_BUSINESS_SHORTCODE!;
@@ -117,11 +119,21 @@ export const handleMpesaCallback = async (
       console.log("MpesaReceiptNumber: ", MpesaReceiptNumber);
       console.log("TransactionDate: ", TransactionDate);
       console.log("PhoneNumber: ", PhoneNumber);
+      const filePath: string = path.join(
+        __dirname,
+        "..",
+        "..",
+        "logs",
+        "payments",
+        "file.txt"
+      );
+
+      const content = `\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\nAmount: ${Amount}\nDate: ${TransactionDate}`;
+      logData({ filePath, content });
+    } else {
     }
 
-    res
-      .status(200)
-      .json({ message: req.body?.stkCallback?.ResultDesc, body: req.body });
+    const filePath = "";
   } catch (error) {
     next(error);
   }
