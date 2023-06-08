@@ -100,47 +100,16 @@ export const handleMpesaCallback = async (
   next: NextFunction
 ) => {
   try {
-    console.log("Callback response from Mpesa is here");
-    console.log(req.body?.stkCallback?.ResultDesc);
-    console.log(req.body);
+    const CheckoutRequestID = req.body?.Body?.stkCallback?.CheckoutRequestID;
+    const MerchantRequestID = req.body?.Body?.stkCallback?.MerchantRequestID;
+    const ResultDesc = req.body?.Body?.stkCallback?.ResultDesc;
+    const ResultCode = req.body?.Body?.stkCallback?.ResultCode;
+
     res
       .status(200)
       .json({ message: req.body?.stkCallback?.ResultDesc, body: req.body });
 
-    //sample reponses
-    //       {
-    //   Body: {
-    //     stkCallback: {
-    //       MerchantRequestID: '22261-70954500-1',
-    //       CheckoutRequestID: 'ws_CO_04062023135927448704783187',
-    //       ResultCode: 1032,
-    //       ResultDesc: 'Request cancelled by user'
-    //     }
-    //   }
-    // }
-
-    // undefined
-    // {
-    //   Body: {
-    //     stkCallback: {
-    //       MerchantRequestID: '20605-88526469-1',
-    //       CheckoutRequestID: 'ws_CO_04062023140053824704783187',
-    //       ResultCode: 2001,
-    //       ResultDesc: 'The initiator information is invalid.'
-    //     }
-    //   }
-    // }
-
-    // {
-    //   Body: {
-    //     stkCallback: {
-    //       MerchantRequestID: '23296-14443029-1',
-    //       CheckoutRequestID: 'ws_CO_04062023140040383704783187',
-    //       ResultCode: 1,
-    //       ResultDesc: 'The balance is insufficient for the transaction.'
-    //     }
-    //   }
-    // }
+    
   } catch (error) {
     next(error);
   }
