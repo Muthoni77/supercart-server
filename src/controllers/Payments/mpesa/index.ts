@@ -105,9 +105,6 @@ export const handleMpesaCallback = async (
     const ResultDesc = req.body?.Body?.stkCallback?.ResultDesc;
     const ResultCode = req.body?.Body?.stkCallback?.ResultCode;
 
-    console.log("ResultCode :", ResultCode);
-    console.log("ResultDesc :", ResultDesc);
-
     if (ResultCode === 0) {
       const CallbackMetadata =
         req.body?.Body?.stkCallback?.CallbackMetadata?.Item;
