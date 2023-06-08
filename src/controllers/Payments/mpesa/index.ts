@@ -105,6 +105,29 @@ export const handleMpesaCallback = async (
     const ResultDesc = req.body?.Body?.stkCallback?.ResultDesc;
     const ResultCode = req.body?.Body?.stkCallback?.ResultCode;
 
+
+    if(ResultCode===0){
+      
+        "CallbackMetadata": {                
+            "Item": [{                        
+               "Name": "Amount",                        
+               "Value": 1.00                    
+            },                    
+            {                        
+               "Name": "MpesaReceiptNumber",                        
+               "Value": "NLJ7RT61SV"                    
+            },                    
+            {                        
+               "Name": "TransactionDate",                        
+               "Value": 20191219102115                    
+            },                    
+            {                        
+               "Name": "PhoneNumber",                        
+               "Value": 254708374149                    
+            }]            
+         } 
+    }
+
     res
       .status(200)
       .json({ message: req.body?.stkCallback?.ResultDesc, body: req.body });
