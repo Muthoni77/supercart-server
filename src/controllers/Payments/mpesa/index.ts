@@ -13,7 +13,7 @@ import {
 } from "../../../utils/payments/mpesa";
 import { logData } from "../../../utils/logData";
 import path from "path";
-import MPesa from "../../../Models/Payments/MPesa";
+import Mpesa from "../../../Models/Payments/Mpesa";
 import User from "../../../Models/Auth/User";
 
 //Environment Variables
@@ -132,7 +132,7 @@ export const handleMpesaCallback = async (
       const PhoneNumber = CallbackMetadata[4].Value;
 
       //save transaction to DB
-      const newRecord = new MPesa();
+      const newRecord = new Mpesa();
       newRecord.PhoneNumber = PhoneNumber;
       newRecord.CheckoutRequestID = CheckoutRequestID;
       newRecord.MerchantRequestID = MerchantRequestID;
