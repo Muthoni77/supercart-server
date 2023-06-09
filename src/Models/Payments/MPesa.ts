@@ -35,4 +35,4 @@ const MpesaSchema = new Schema({
   },
 });
 
-export default mongoose.model("Mpesa", MpesaSchema);
+export default mongoose.model("MpesaRecord", MpesaSchema);
