@@ -13,6 +13,8 @@ import {
 } from "../../../utils/payments/mpesa";
 import { logData } from "../../../utils/logData";
 import path from "path";
+import MPesa from "../../../Models/Payments/MPesa";
+import User from "../../../Models/Auth/User";
 
 //Environment Variables
 const BusinessShortCode = process.env.MPESA_BUSINESS_SHORTCODE!;
@@ -123,10 +125,24 @@ export const handleMpesaCallback = async (
         req.body?.Body?.stkCallback?.CallbackMetadata?.Item;
       const Amount = CallbackMetadata[0].Value;
       const MpesaReceiptNumber = CallbackMetadata[1].Value;
-      //unused
+      /* unused flag balance
       const Balance = CallbackMetadata[2].Value;
+      */
       const TransactionDate = CallbackMetadata[3].Value;
       const PhoneNumber = CallbackMetadata[4].Value;
+
+      //save transaction to DB
+      const newRecord = new MPesa();
+      newRecord.PhoneNumber = PhoneNumber;
+      newRecord.CheckoutRequestID = CheckoutRequestID;
+      newRecord.MerchantRequestID = MerchantRequestID;
+      newRecord.MpesaReceiptNumber = MpesaReceiptNumber;
+      newRecord.ResultCode = ResultCode;
+      newRecord.ResultDesc = ResultDesc;
+      newRecord.Amount = Amount;
+      newRecord.TransactionDate = TransactionDate;
+
+      await newRecord.save();
 
       content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\nAmount: ${Amount}\nPhoneNumber: ${PhoneNumber}\nDate: ${TransactionDate}\n\n*****************************\n\n`;
     } else {
