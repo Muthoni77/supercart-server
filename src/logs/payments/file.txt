@@ -1,0 +1,22 @@
+Method:MPesa
+CheckoutRequestID: ws_CO_09062023120252671704783187
+MerchantRequestID: 44407-12935697-1
+Result code: 0
+Result Description: The service request is processed successfully.
+Amount: 1
+PhoneNumber: 254704783187
+Date: 20230609120154
+
+*****************************
+
+Method:MPesa
+CheckoutRequestID: ws_CO_09062023122536971704783187
+MerchantRequestID: 44400-13015837-1
+Result code: 0
+Result Description: The service request is processed successfully.
+Amount: 1
+PhoneNumber: 254704783187
+Date: 20230609122438
+
+*****************************
+
