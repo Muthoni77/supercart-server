@@ -1,28 +1,22 @@
 Method:MPesa
-Result code: 1032
-Result Description: Request cancelled by user
-
-Method:MPesa
-Result code: 2001
-Result Description: The initiator information is invalid.
-
-Method:MPesa
+CheckoutRequestID: ws_CO_09062023120252671704783187
+MerchantRequestID: 44407-12935697-1
 Result code: 0
 Result Description: The service request is processed successfully.
 Amount: 1
-Date: 20230608214439
+PhoneNumber: 254704783187
+Date: 20230609120154
+
+*****************************
 
 Method:MPesa
-CheckoutRequestID: ws_CO_08062023215331244704783187
-MerchantRequestID: 10477-107219655-1
-Result code: 1032
-Result Description: Request cancelled by user
-
-Method:MPesa
-CheckoutRequestID: ws_CO_08062023215525342704783187
-MerchantRequestID: 44399-11317968-1
+CheckoutRequestID: ws_CO_09062023122536971704783187
+MerchantRequestID: 44400-13015837-1
 Result code: 0
 Result Description: The service request is processed successfully.
 Amount: 1
-Date: 20230608215425
+PhoneNumber: 254704783187
+Date: 20230609122438
+
+*****************************
 

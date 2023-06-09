@@ -1,5 +1,4 @@
 import fs from "fs";
-import path from "path";
 import { LogDataBodyType } from "../Types/Utils";
 
 export const logData = async ({ filePath, content }: LogDataBodyType) => {
