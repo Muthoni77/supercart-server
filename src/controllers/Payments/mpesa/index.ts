@@ -130,7 +130,7 @@ export const handleMpesaCallback = async (
 
       content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\nAmount: ${Amount}\nPhoneNumber: ${PhoneNumber}\nDate: ${TransactionDate}\n\n`;
     } else {
-      content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\n\n`;
+      content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\n*****************************\n\n`;
     }
     logData({ filePath, content });
   } catch (error) {
