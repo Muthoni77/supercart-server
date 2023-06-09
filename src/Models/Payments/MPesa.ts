@@ -1,11 +1,9 @@
 import mongoose, { Schema } from "mongoose";
-import User from "../Auth/User";
 
 const MpesaSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
+  PhoneNumber: {
+    type: String,
     required: true,
-    ref: User,
   },
   CheckoutRequestID: {
     type: String,
