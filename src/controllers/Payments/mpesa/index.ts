@@ -144,7 +144,7 @@ export const handleMpesaCallback = async (
 
       await newRecord.save();
 
-      content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\nAmount: ${Amount}\nPhoneNumber: ${PhoneNumber}\nDate: ${TransactionDate}\n\n*****************************\n\n`;
+      content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nMpesaReceiptNumber: ${MpesaReceiptNumber}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\nAmount: ${Amount}\nPhoneNumber: ${PhoneNumber}\nDate: ${TransactionDate}\n\n*****************************\n\n`;
     } else {
       content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\n\n*****************************\n\n`;
     }
