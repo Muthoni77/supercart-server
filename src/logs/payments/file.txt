@@ -26,3 +26,12 @@ Result Description: The service request is processed successfully.
 Amount: 1
 Date: 20230608215425
 
+Method:MPesa
+CheckoutRequestID: ws_CO_09062023104804216704783187
+MerchantRequestID: 11240-37459313-1
+Result code: 0
+Result Description: The service request is processed successfully.
+Amount: 1
+Date: 20230609104706
+
+[{"Name":"Amount","Value":1},{"Name":"MpesaReceiptNumber","Value":"RF92LRHVHO"},{"Name":"Balance"},{"Name":"TransactionDate","Value":20230609104706},{"Name":"PhoneNumber","Value":254704783187}]

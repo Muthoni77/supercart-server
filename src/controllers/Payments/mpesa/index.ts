@@ -106,6 +106,7 @@ export const handleMpesaCallback = async (
     const MerchantRequestID = req.body?.Body?.stkCallback?.MerchantRequestID;
     const ResultDesc = req.body?.Body?.stkCallback?.ResultDesc;
     const ResultCode = req.body?.Body?.stkCallback?.ResultCode;
+    let content: any = null;
 
     const filePath: string = path.join(
       __dirname,
@@ -127,13 +128,11 @@ export const handleMpesaCallback = async (
       const TransactionDate = CallbackMetadata[3].Value;
       const PhoneNumber = CallbackMetadata[4].Value;
 
-      const content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\nAmount: ${Amount}\nDate: ${TransactionDate}\n\n`;
-      logData({ filePath, content });
-      logData({ filePath, content: JSON.stringify(CallbackMetadata) });
+      content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\nAmount: ${Amount}\nPhoneNumber: ${PhoneNumber}\nDate: ${TransactionDate}\n\n`;
     } else {
-      const content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\n\n`;
-      logData({ filePath, content });
+      content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\n\n`;
     }
+    logData({ filePath, content });
   } catch (error) {
     next(error);
   }
