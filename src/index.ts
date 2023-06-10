@@ -5,6 +5,12 @@ import dotenv from "dotenv";
 import errorHandler from "./middlewares/ErrorHandler";
 import connectToDB from "./config/ConnectToDB";
 
+//socket.io
+import http from "http";
+const server = http.createServer(app);
+import { Server } from "socket.io";
+const io = new Server(server);
+
 dotenv.config();
 
 app.use(cors());
@@ -43,8 +49,12 @@ app.use("*", (req, res) => {
   });
 });
 
+io.on("connection", (socket) => {
+  console.log("A user connected ", socket);
+});
+
 mongoose.connection.on("open", () => {
-  app.listen(PORT, (): void => {
+  server.listen(PORT, (): void => {
     console.log(`Server is listening on port ${PORT}`);
   });
 });
