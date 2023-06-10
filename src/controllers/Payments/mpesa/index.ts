@@ -92,7 +92,9 @@ export const handleMpesaCheckout = async (
       CheckoutRequestID: response?.data?.CheckoutRequestID,
       message: response?.data?.ResponseDescription,
     });
-  } catch (error) {
+  } catch (error: any) {
+    console.log("error");
+    console.log(error?.message);
     next(error);
   }
 };
