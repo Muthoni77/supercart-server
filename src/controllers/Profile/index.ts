@@ -71,7 +71,6 @@ export const updateProfilePhoto = async (
 ) => {
   try {
     const email = req.user?.email;
-    console.log("emal is here ", email);
     if (!email) {
       next(Error("Unauthorized request"));
     }
