@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //socket.io
 const server = http.createServer(app);
-const io = new Server(server, {
+export const io = new Server(server, {
   cors: {
     origin: "*",
     methods: "*",
