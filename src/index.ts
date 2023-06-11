@@ -39,6 +39,7 @@ app.get("/", (req: Request, res: Response): void => {
     "<h1>Welcome to Supercart Server</h1> <a href='http://localhost:3000'>Kindly checkout our application</a>"
   );
 });
+
 app.use("/auth", AuthRoutes);
 app.use("/profile", ProfileRoutes);
 app.use("/test", TestRoutes);
@@ -54,13 +55,7 @@ app.use("*", (req, res) => {
   });
 });
 
-io.on("connection", (socket) => {
-  console.log("A user connected :", socket.id);
-
-  socket.on("hello", (data) => {
-    console.log("Test data from frontend by:" + data?.author);
-  });
-});
+io.on("connection", (socket) => {});
 
 mongoose.connection.on("open", () => {
   server.listen(PORT, (): void => {
