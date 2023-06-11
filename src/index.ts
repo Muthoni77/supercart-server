@@ -4,23 +4,24 @@ import cors from "cors";
 import dotenv from "dotenv";
 import errorHandler from "./middlewares/ErrorHandler";
 import connectToDB from "./config/ConnectToDB";
-
-//socket.io
 import http from "http";
-const server = http.createServer(app);
 import { Server } from "socket.io";
-const io = new Server(server, {
-  cors: {
-    origin: process.env.FRONTEND_URL,
-  },
-});
-
-dotenv.config();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Use the express-fileupload middleware
+
+//socket.io
+const server = http.createServer(app);
+export const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: "*",
+  },
+});
+
+dotenv.config();
 
 //routes
 import AuthRoutes from "./Routes/AuthRoutes";
@@ -38,6 +39,7 @@ app.get("/", (req: Request, res: Response): void => {
     "<h1>Welcome to Supercart Server</h1> <a href='http://localhost:3000'>Kindly checkout our application</a>"
   );
 });
+
 app.use("/auth", AuthRoutes);
 app.use("/profile", ProfileRoutes);
 app.use("/test", TestRoutes);
@@ -53,9 +55,7 @@ app.use("*", (req, res) => {
   });
 });
 
-io.on("connection", (socket) => {
-  console.log("A user connected ", socket);
-});
+io.on("connection", (socket) => {});
 
 mongoose.connection.on("open", () => {
   server.listen(PORT, (): void => {

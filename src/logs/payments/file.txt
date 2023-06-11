@@ -20,3 +20,103 @@ Date: 20230609122438
 
 *****************************
 
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023155524233704783187
+MerchantRequestID: 23309-42168605-1
+Result code: 1032
+Result Description: Request cancelled by user
+
+*****************************
+
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023155610179704783187
+MerchantRequestID: 20607-116082697-1
+Result code: 1019
+Result Description: Transaction has expired
+
+*****************************
+
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023160820069704783187
+MerchantRequestID: 85872-25406974-1
+Result code: 1032
+Result Description: Request cancelled by user
+
+*****************************
+
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023161205873704783187
+MerchantRequestID: 1463-118532530-1
+Result code: 1032
+Result Description: Request cancelled by user
+
+*****************************
+
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023161655119704783187
+MerchantRequestID: 11227-46696488-1
+Result code: 1032
+Result Description: Request cancelled by user
+
+*****************************
+
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023161930602704783187
+MerchantRequestID: 85879-25445253-1
+Result code: 1032
+Result Description: Request cancelled by user
+
+*****************************
+
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023162302457704783187
+MerchantRequestID: 10473-117729281-1
+Result code: 1032
+Result Description: Request cancelled by user
+
+*****************************
+
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023162507614704783187
+MerchantRequestID: 20595-116179514-1
+Result code: 1032
+Result Description: Request cancelled by user
+
+*****************************
+
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023162700671704783187
+MerchantRequestID: 129075-117727506-1
+Result code: 1032
+Result Description: Request cancelled by user
+
+*****************************
+
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023163034238704783187
+MerchantRequestID: 1463-118595231-1
+Result code: 1032
+Result Description: Request cancelled by user
+
+*****************************
+
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023163053506704783187
+MerchantRequestID: 12144-118288789-1
+Result code: 2001
+Result Description: The initiator information is invalid.
+
+*****************************
+
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023163954652704783187
+MerchantRequestID: 20605-116229753-1
+MpesaReceiptNumber: RFB5SMAIR5
+Result code: 0
+Result Description: The service request is processed successfully.
+Amount: 1
+PhoneNumber: 254704783187
+Date: 20230611163854
+
+*****************************
+
