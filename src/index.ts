@@ -54,7 +54,7 @@ app.use("*", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  console.log("A user connected ", socket);
+  console.log("A user connected :", socket);
 });
 
 mongoose.connection.on("open", () => {
