@@ -55,6 +55,10 @@ app.use("*", (req, res) => {
 
 io.on("connection", (socket) => {
   console.log("A user connected :", socket.id);
+
+  socket.on("hello", (data: any) => {
+    console.log("Test data from frontend by:" + data?.author);
+  });
 });
 
 mongoose.connection.on("open", () => {
