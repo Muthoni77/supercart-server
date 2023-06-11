@@ -13,7 +13,7 @@ import {
 } from "../../../utils/payments/mpesa";
 import { logData } from "../../../utils/logData";
 import path from "path";
-import Mpesa from "../../../Models/Payments/Mpesa";
+import MpesaRecord from "../../../Models/Payments/Mpesa";
 import User from "../../../Models/Auth/User";
 import { io } from "../../..";
 
@@ -139,7 +139,7 @@ export const handleMpesaCallback = async (
       const PhoneNumber = CallbackMetadata[4].Value;
 
       //save transaction to DB
-      const newRecord = new Mpesa();
+      const newRecord = new MpesaRecord();
       newRecord.PhoneNumber = PhoneNumber;
       newRecord.CheckoutRequestID = CheckoutRequestID;
       newRecord.MerchantRequestID = MerchantRequestID;
@@ -155,9 +155,14 @@ export const handleMpesaCallback = async (
     } else {
       content = `Method:MPesa\nCheckoutRequestID: ${CheckoutRequestID}\nMerchantRequestID: ${MerchantRequestID}\nResult code: ${ResultCode}\nResult Description: ${ResultDesc}\n\n*****************************\n\n`;
     }
-    io.emit("mpesaStatus", { ResultCode, ResultDesc });
+    io.emit("mpesaCallback", {
+      ResultCode,
+      ResultDesc,
+    });
     logData({ filePath, content });
-  } catch (error) {
+  } catch (error: any) {
+    console.log("Failed to log error");
+    console.log(error?.messages);
     next(error);
   }
 };
