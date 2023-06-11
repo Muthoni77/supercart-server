@@ -20,3 +20,19 @@ Date: 20230609122438
 
 *****************************
 
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023155524233704783187
+MerchantRequestID: 23309-42168605-1
+Result code: 1032
+Result Description: Request cancelled by user
+
+*****************************
+
+Method:MPesa
+CheckoutRequestID: ws_CO_11062023155610179704783187
+MerchantRequestID: 20607-116082697-1
+Result code: 1019
+Result Description: Transaction has expired
+
+*****************************
+
