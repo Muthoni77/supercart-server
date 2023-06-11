@@ -4,23 +4,24 @@ import cors from "cors";
 import dotenv from "dotenv";
 import errorHandler from "./middlewares/ErrorHandler";
 import connectToDB from "./config/ConnectToDB";
-
-//socket.io
 import http from "http";
-const server = http.createServer(app);
 import { Server } from "socket.io";
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
-});
-
-dotenv.config();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Use the express-fileupload middleware
+
+//socket.io
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: "*",
+  },
+});
+
+dotenv.config();
 
 //routes
 import AuthRoutes from "./Routes/AuthRoutes";
@@ -56,7 +57,7 @@ app.use("*", (req, res) => {
 io.on("connection", (socket) => {
   console.log("A user connected :", socket.id);
 
-  socket.on("hello", (data: any) => {
+  socket.on("hello", (data) => {
     console.log("Test data from frontend by:" + data?.author);
   });
 });
